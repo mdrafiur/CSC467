@@ -24,6 +24,11 @@ int yyline = 1;
 %option noyywrap
 
 WS          [ \t]
+letter      [A-Za-z]
+digit       [0-9]
+true        "true"
+false       "false"
+sign        [\+\-]
 
 %%
 "/*"        {
@@ -47,4 +52,17 @@ WS          [ \t]
 
 .           { yERROR("Unknown token"); }
 
+"int"       { yTRACE((TOKEN_INT_DEC));      return (TOKEN_INT_DEC);}
+"bool"      { yTRACE((TOKEN_BOOL));         return (TOKEN_BOOL);}
+"float"     { yTRACE((TOKEN_FLOAT_DEC));    return (TOKEN_FLOAT_DEC);}
+"vec2"      { yTRACE((TOKEN_VEC2));         return (TOKEN_VEC2);}
+"vec3"      { yTRACE((TOKEN_VEC3));         return (TOKEN_VEC3);}
+"vec4"      { yTRACE((TOKEN_VEC4));         return (TOKEN_VEC4);}
+"bvec2"     { yTRACE((TOKEN_BVEC2));        return (TOKEN_BVEC2);}
+"bvec3"     { yTRACE((TOKEN_BVEC3));        return (TOKEN_BVEC3);}
+"bvec4"     { yTRACE((TOKEN_BVEC4));        return (TOKEN_BVEC4);}
+"ivec2"     { yTRACE((TOKEN_IVEC2));        return (TOKEN_IVEC2);}
+"ivec3"     { yTRACE((TOKEN_IVEC3));        return (TOKEN_IVEC3);}
+"ivec4"     { yTRACE((TOKEN_IVEC4));        return (TOKEN_IVEC4);}
 %%
+

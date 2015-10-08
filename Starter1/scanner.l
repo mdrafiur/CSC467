@@ -26,8 +26,60 @@ int yyline = 1;
 WS          [ \t]
 letter      [A-Za-z]
 digit       [0-9]
-sign        [\+\-\*\/\^]
-relop       [\=|\!|\!\=|&&|\|\||\=\=|\<|\>|\<\=|\>\=]
+
+%%
+"+"         {yTRACE((PLUS));     return(PLUS);}
+"-"         {yTRACE((MINUS));     return(MINUS);}
+"*"         {yTRACE((TIMES));     return(TIMES);}        
+"/"         {yTRACE((DIVIDE));     return(DIVIDE);}
+"^"         {yTRACE((SQUARE));     return(SQUARE);}
+
+"true"      {yTRACE((TRUE));     return(TRUE);}
+"false"     {yTRACE((FALSE));     return(FALSE);}
+
+"!"         {yTRACE((NOT));     return(NOT);}
+"&&"        {yTRACE((AND));     return(AND);}
+"||"        {yTRACE((OR));     return(OR);}
+"=="        {yTRACE((EQL));     return(EQL);}
+"!="        {yTRACE((NEQL));     return(NEQL);}
+"<"         {yTRACE((LSS));     return(LSS);}
+"<="        {yTRACE((LEQ));     return(LEQ);}
+">"         {yTRACE((GTR));     return(GTR);}
+">="        {yTRACE((GEQ));     return(GEQ);}
+
+"("         {yTRACE((LPAREN));     return(LPAREN);}
+")"         {yTRACE((RPAREN));     return(RPAREN);}
+"["         {yTRACE((LSPAREN));     return(LSPAREN);}
+"]"         {yTRACE((RSPAREN));     return(RSPAREN);}
+"{"         {yTRACE((LCPAREN));     return(LCPAREN);}
+"}"         {yTRACE((RCPAREN));     return(RCPAREN);}
+
+"const"     {yTRACE((CONST));     return(CONST);}
+";"         {yTRACE((SEMI));     return(SEMI);}
+"/*"        {yTRACE((LCMET));     return(LCMET);}
+"*/"        {yTRACE((RCMET));     return(RCMET);}
+
+"int"       { yTRACE((INT));      return(INT);}
+"bool"      { yTRACE((BOOL));     return(BOOL);}
+"float"     { yTRACE((FLOAT));    return(FLOAT);}
+"vec2"      { yTRACE((VEC2));     return(VEC2);}
+"vec3"      { yTRACE((VEC3));     return(VEC3);}
+"vec4"      { yTRACE((VEC4));     return(VEC4);}
+"bvec2"     { yTRACE((BVEC2));    return(BVEC2);}
+"bvec3"     { yTRACE((BVEC3));    return(BVEC3);}
+"bvec4"     { yTRACE((BVEC4));    return(BVEC4);}
+"ivec2"     { yTRACE((IVEC2));    return(IVEC2);}
+"ivec3"     { yTRACE((IVEC3));    return(IVEC3);}
+"ivec4"     { yTRACE((IVEC4));    return(IVEC4);}
+
+"lit"       { yTRACE((LIT));      return(LIT);}
+"dp3"       { yTRACE((DP3));      return(DP3);}
+"rsq"       { yTRACE((RSQ));      return(RSQ);}
+
+"if"        { yTRACE((IF));       return(IF);}       
+"else"      { yTRACE((ELSE));     return(ELSE);}
+"while"     { yTRACE((WHILE));    return(WHILE);}
+
 
 
 %%
@@ -52,29 +104,5 @@ relop       [\=|\!|\!\=|&&|\|\||\=\=|\<|\>|\<\=|\>\=]
 
 .           { yERROR("Unknown token"); }
 
-"int"       { yTRACE((INT));      return(INT);}
-"bool"      { yTRACE((BOOL));     return(BOOL);}
-"float"     { yTRACE((FLOAT));    return(FLOAT);}
-"vec2"      { yTRACE((VEC2));     return(VEC2);}
-"vec3"      { yTRACE((VEC3));     return(VEC3);}
-"vec4"      { yTRACE((VEC4));     return(VEC4);}
-"bvec2"     { yTRACE((BVEC2));    return(BVEC2);}
-"bvec3"     { yTRACE((BVEC3));    return(BVEC3);}
-"bvec4"     { yTRACE((BVEC4));    return(BVEC4);}
-"ivec2"     { yTRACE((IVEC2));    return(IVEC2);}
-"ivec3"     { yTRACE((IVEC3));    return(IVEC3);}
-"ivec4"     { yTRACE((IVEC4));    return(IVEC4);}
-
-"lit"       { yTRACE((LIT));      return(LIT);}
-"dp3"       { yTRACE((DP3));      return(DP3);}
-"rsq"       { yTRACE((RSQ));      return(RSQ);}
-
-{sign}      { yTRACE((SIGN));     return(SIGN);}
-{relop}     { yTRACE((RELOP));    return(RELOP);}                                     }
-
-"if"        { yTRACE((IF));       return(IF);}       }
-"else"      { yTRACE((ELSE));     return(ELSE);}
-"while"     { yTRACE((WHILE));    return(WHILE);}
-                                      }
 %%
 

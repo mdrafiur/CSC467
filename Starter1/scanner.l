@@ -24,8 +24,8 @@ int yyline = 1;
 %option noyywrap
 
 WS          [ \t]
-letter      [A-Za-z]
-digit       [0-9]
+LETTER      [A-Za-z]
+DIGIT       [0-9]
 
 %%
 "+"         {yTRACE((PLUS));     return(PLUS);}

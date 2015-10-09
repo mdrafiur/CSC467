@@ -60,10 +60,9 @@ extern int yyline;        /* variable holding current line number   */
   char* string;
 }
 // TODO:Replace myToken with your tokens, you can use these tokens in flex
-%token  PLUS MINUS    
-%token TRUE FALSE  AND OR EQL NEQL LSS LEQ GTR GEQ LPAREN RPAREN LSPAREN RSPAREN LCPAREN RCPAREN CONST SEMI LCMET RCMET INT BOOL FLOAT VEC2 VEC3 VEC4 BVEC2 BVEC3 BVEC4 IVEC2 IVEC3 IVEC4 LIT DP3 RSQ IF ELSE WHILE
-%left TIMES DIVIDE
-%right SQUARE NOT
+%token BOOL LPAREN RPAREN LSPAREN RSPAREN LCPAREN RCPAREN CONST SEMI INT BOOL FLOAT VEC2 VEC3 VEC4 BVEC2 BVEC3 BVEC4 IVEC2 IVEC3 IVEC4 FUNCNAME IF ELSE WHILE TYPE VARN FCONSTR ARRYN
+%left TIMES DIVIDE PLUS MINUS AND OR EQL NEQL GTR GEQ LSS LEQ
+%right SQUARE NOT NEG
 
 %start    program
 
@@ -83,13 +82,50 @@ program
   :   tokens       
   ;
 tokens
-  :  tokens token  
+  :MINUS token %prec NEG
+  |tokens token  
   |      
   ;
 // TODO: replace myToken with the token the you defined.
 token
-  :     myToken1 
-  |     myToken2                     
+  :     BOOL
+  |     CONST
+  |     SEMI
+  |     INT 
+  |     BOOL 
+  |     FLOAT 
+  |     VEC2 
+  |     VEC3 
+  |     VEC4
+  |     BVEC2
+  |     BVEC3
+  |     BVEC4
+  |     IVEC2
+  |     IVEC3
+  |     IVEC4
+  |     FUNCNAME
+  |     IF 
+  |     ELSE 
+  |     WHILE
+  |     TYPE
+  |     VARN 
+  |     FCONSTR 
+  |     ARRYN
+  |     TIMES
+  |     DIVIDE
+  |     PLUS 
+  |     MINUS 
+  |     AND 
+  |     OR 
+  |     EQL 
+  |     NEQL 
+  |     GTR 
+  |     GEQ 
+  |     LSS 
+  |     LEQ
+  |     SQUARE 
+  |     NOT 
+  |     NEG
   ;
 
 

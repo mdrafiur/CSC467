@@ -28,6 +28,7 @@ WS          [ \t]
 LETTER      [A-Za-z]
 DIGIT       [0-9]
 FLOAT       ({DIGIT}+"."{DIGIT}+)
+BOOL        "true"|"false"
 
 %%
 <INITIAL>"/*"                   {BEGIN(F_COMMENT);}
@@ -86,10 +87,21 @@ FLOAT       ({DIGIT}+"."{DIGIT}+)
 "while"     {yTRACE((WHILE));    return(WHILE);}
 
 
-{FLOAT}     {yTRACE((FLOAT)); yylval.fnum = atof(yytext); return (strcmp(yytext,".")) ? FLOAT : Error; }????????
+{FLOAT}     {yTRACE((FLOAT)); yylval.fnum = atof(yytext); return (strcmp(yytext,".")) ? FLOAT : Error; }
 {DIGIT}+    {yTRACE((INT));   yylval.num = atoi(yytext);  return(INT);}
-{LETTER}({LETTER}|{DIGIT})*+"_"({LETTER}|{DIGIT})+    {yTRACE((VARN)); yylval.string = strdup(yytext); return(VARN);}
+{LETTER}({LETTER}|{DIGIT})*("_"({LETTER}|{DIGIT})+)*   {yTRACE((VARN)); yylval.string = strdup(yytext); return(VARN);}
+("lit"|"dp3"|"rsq")"(""("((({DIGIT},)*{DIGIT})| (({FLOAT},)*{FLOAT}))?")"{yTRACE((FCONSTR)); yylval.string = strdup(yytext); return(FCONSTR);}
+{LETTER}({LETTER}|{DIGIT})*("_"({LETTER}|{DIGIT})+)* "[" {DIGIT}+"]"{yTRACE((ARRYN)); yylval.string = strdup(yytext); return(ARRYN);}
 
+"vec2""("{FLOAT}","{FLOAT}")"{yTRACE((VEC2));yylval.string = strdup(yytext);return(VEC2);}
+"vec3""("{FLOAT}","{FLOAT}","{FLOAT}")"{yTRACE((VEC3));yylval.string = strdup(yytext);return(VEC3);}
+"vec4""("{FLOAT}","{FLOAT}","{FLOAT}","{FLOAT}")"{yTRACE((VEC4));yylval.string = strdup(yytext);return(VEC4);}
+"bvec2""("{BOOL}","{BOOL}")"{yTRACE((BVEC2));yylval.string = strdup(yytext);return(BVEC2);}
+"bvec3""("{BOOL}","{BOOL}","{BOOL}")"{yTRACE((BVEC3));yylval.string = strdup(yytext);return(BVEC3);}
+"bvec4""("{BOOL}","{BOOL}","{BOOL}","{BOOL}")"{yTRACE((BVEC4));yylval.string = strdup(yytext);return(BVEC4);}
+"ivec2""("{DIGIT}+","{DIGIT}+")"{yTRACE((VEC2));yylval.string = strdup(yytext);return(VEC2);}
+"ivec3""("{DIGIT}+","{DIGIT}+","{DIGIT}+")"{yTRACE((IVEC3));yylval.string = strdup(yytext);return(IVEC3);}
+"ivec4""("{DIGIT}+","{DIGIT}+","{DIGIT}+","{DIGIT}+")"{yTRACE((IVEC4));yylval.string = strdup(yytext);return(IVEC4);}
 
 
 

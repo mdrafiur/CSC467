@@ -56,10 +56,14 @@ extern int yyline;        /* variable holding current line number   */
 
 %union {
   int num;
+  float fnum;
+  char* string;
 }
 // TODO:Replace myToken with your tokens, you can use these tokens in flex
-%token  PLUS MINUS TIMES DIVIDE SQUARE TRUE FALSE NOT AND OR EQL NEQL LSS LEQ GTR GEQ LPAREN RPAREN LSPAREN RSPAREN LCPAREN RCPAREN CONST SEMI LCMET RCMET INT BOOL FLOAT VEC2 VEC3 VEC4 BVEC2 BVEC3 BVEC4 IVEC2 IVEC3 IVEC4 LIT DP3 RSQ IF ELSE WHILE
-
+%token  PLUS MINUS    
+%token TRUE FALSE  AND OR EQL NEQL LSS LEQ GTR GEQ LPAREN RPAREN LSPAREN RSPAREN LCPAREN RCPAREN CONST SEMI LCMET RCMET INT BOOL FLOAT VEC2 VEC3 VEC4 BVEC2 BVEC3 BVEC4 IVEC2 IVEC3 IVEC4 LIT DP3 RSQ IF ELSE WHILE
+%left TIMES DIVIDE
+%right SQUARE NOT
 
 %start    program
 
@@ -74,7 +78,8 @@ extern int yyline;        /* variable holding current line number   */
  *  Phase 3:
  *    1. Add code to rules for construction of AST.
  ***********************************************************************/
-program
+program 
+
   :   tokens       
   ;
 tokens

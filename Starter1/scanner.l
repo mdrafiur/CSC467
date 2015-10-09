@@ -22,13 +22,20 @@ int yyline = 1;
 
 %}
 %option noyywrap
+%x F_COMMENT
 
 WS          [ \t]
 LETTER      [A-Za-z]
 DIGIT       [0-9]
+FLOAT       ({DIGIT}+"."{DIGIT}+)
 
 %%
+<INITIAL>"/*"                   {BEGIN(F_COMMENT);}
+<F_COMMENT>"*/"                 {BEGIN(INITIAL); } 
+<F_COMMENT>[.\n]+               { }
+
 "+"         {yTRACE((PLUS));     return(PLUS);} 
+"-"         {yTRACE((MINUS));     return(MINUS);} 
 "*"         {yTRACE((TIMES));     return(TIMES);}        
 "/"         {yTRACE((DIVIDE));     return(DIVIDE);}
 "^"         {yTRACE((SQUARE));     return(SQUARE);}
@@ -55,8 +62,6 @@ DIGIT       [0-9]
 
 "const"     {yTRACE((CONST));     return(CONST);}
 ";"         {yTRACE((SEMI));     return(SEMI);}
-"/*"        {yTRACE((LCMET));     return(LCMET);}
-"*/"        {yTRACE((RCMET));     return(RCMET);}
 
 "int"       {yTRACE((TYPE)); yylval.string = strdup(yytext);      return(TYPE);}
 "bool"      {yTRACE((TYPE)); yylval.string = strdup(yytext);      return(TYPE);}
@@ -81,8 +86,8 @@ DIGIT       [0-9]
 "while"     {yTRACE((WHILE));    return(WHILE);}
 
 
-([0-9]*.[0-9]*)  {yTRACE((FLOAT)); yylval.fnum = atof(yytext); return (strcmp(yytext,".")) ? FLOAT : Error; }????????
-{DIGIT}+         {yTRACE((INT));   yylval.num = atoi(yytext);  return(INT);}
+{FLOAT}     {yTRACE((FLOAT)); yylval.fnum = atof(yytext); return (strcmp(yytext,".")) ? FLOAT : Error; }????????
+{DIGIT}+    {yTRACE((INT));   yylval.num = atoi(yytext);  return(INT);}
 {LETTER}({LETTER}|{DIGIT})*+"_"({LETTER}|{DIGIT})+    {yTRACE((VARN)); yylval.string = strdup(yytext); return(VARN);}
 
 

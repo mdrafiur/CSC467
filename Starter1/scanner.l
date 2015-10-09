@@ -28,14 +28,13 @@ LETTER      [A-Za-z]
 DIGIT       [0-9]
 
 %%
-"+"         {yTRACE((PLUS));     return(PLUS);}
-"-"         {yTRACE((MINUS));     return(MINUS);}
+"+"         {yTRACE((PLUS));     return(PLUS);} 
 "*"         {yTRACE((TIMES));     return(TIMES);}        
 "/"         {yTRACE((DIVIDE));     return(DIVIDE);}
 "^"         {yTRACE((SQUARE));     return(SQUARE);}
 
-"true"      {yTRACE((TRUE));     return(TRUE);}
-"false"     {yTRACE((FALSE));     return(FALSE);}
+"true"      {yTRACE((BOOL)); yylval.string = strdup(yytext); return(BOOL);}
+"false"     {yTRACE((BOOL)); yylval.string = strdup(yytext); return(BOOL);}
 
 "!"         {yTRACE((NOT));     return(NOT);}
 "&&"        {yTRACE((AND));     return(AND);}
@@ -59,26 +58,35 @@ DIGIT       [0-9]
 "/*"        {yTRACE((LCMET));     return(LCMET);}
 "*/"        {yTRACE((RCMET));     return(RCMET);}
 
-"int"       {yTRACE((INT));      return(INT);}
-"bool"      {yTRACE((BOOL));     return(BOOL);}
-"float"     {yTRACE((FLOAT));    return(FLOAT);}
-"vec2"      {yTRACE((VEC2));     return(VEC2);}
-"vec3"      {yTRACE((VEC3));     return(VEC3);}
-"vec4"      {yTRACE((VEC4));     return(VEC4);}
-"bvec2"     {yTRACE((BVEC2));    return(BVEC2);}
-"bvec3"     {yTRACE((BVEC3));    return(BVEC3);}
-"bvec4"     {yTRACE((BVEC4));    return(BVEC4);}
-"ivec2"     {yTRACE((IVEC2));    return(IVEC2);}
-"ivec3"     {yTRACE((IVEC3));    return(IVEC3);}
-"ivec4"     {yTRACE((IVEC4));    return(IVEC4);}
+"int"       {yTRACE((TYPE)); yylval.string = strdup(yytext);      return(TYPE);}
+"bool"      {yTRACE((TYPE)); yylval.string = strdup(yytext);      return(TYPE);}
+"float"     {yTRACE((TYPE)); yylval.string = strdup(yytext);      return(TYPE);}
 
-"lit"       {yTRACE((LIT));      return(LIT);}
-"dp3"       {yTRACE((DP3));      return(DP3);}
-"rsq"       {yTRACE((RSQ));      return(RSQ);}
+"vec2"      {yTRACE((TYPE)); yylval.string = strdup(yytext);      return(TYPE);}
+"vec3"      {yTRACE((TYPE)); yylval.string = strdup(yytext);      return(TYPE);}
+"vec4"      {yTRACE((TYPE)); yylval.string = strdup(yytext);      return(TYPE);}
+"bvec2"     {yTRACE((TYPE)); yylval.string = strdup(yytext);      return(TYPE);}
+"bvec3"     {yTRACE((TYPE)); yylval.string = strdup(yytext);      return(TYPE);}
+"bvec4"     {yTRACE((TYPE)); yylval.string = strdup(yytext);      return(TYPE);}
+"ivec2"     {yTRACE((TYPE)); yylval.string = strdup(yytext);      return(TYPE);}
+"ivec3"     {yTRACE((TYPE)); yylval.string = strdup(yytext);      return(TYPE);}
+"ivec4"     {yTRACE((TYPE)); yylval.string = strdup(yytext);      return(TYPE);}
+
+"lit"       {yTRACE((FUNCNAME)); yylval.string = strdup(yytext);  return(FUNCNAME);}
+"dp3"       {yTRACE((FUNCNAME)); yylval.string = strdup(yytext);  return(FUNCNAME);}
+"rsq"       {yTRACE((FUNCNAME)); yylval.string = strdup(yytext);  return(FUNCNAME);}
 
 "if"        {yTRACE((IF));       return(IF);}       
 "else"      {yTRACE((ELSE));     return(ELSE);}
 "while"     {yTRACE((WHILE));    return(WHILE);}
+
+
+([0-9]*.[0-9]*)  {yTRACE((FLOAT)); yylval.fnum = atof(yytext); return (strcmp(yytext,".")) ? FLOAT : Error; }????????
+{DIGIT}+         {yTRACE((INT));   yylval.num = atoi(yytext);  return(INT);}
+{LETTER}({LETTER}|{DIGIT})*+"_"({LETTER}|{DIGIT})+    {yTRACE((VARN)); yylval.string = strdup(yytext); return(VARN);}
+
+
+
 
 
 

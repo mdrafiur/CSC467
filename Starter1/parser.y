@@ -58,7 +58,7 @@ extern int yyline;        /* variable holding current line number   */
   int num;
 }
 // TODO:Replace myToken with your tokens, you can use these tokens in flex
-%token           myToken1 myToken2  
+%token  PLUS MINUS TIMES DIVIDE SQUARE TRUE FALSE NOT AND OR EQL NEQL LSS LEQ GTR GEQ LPAREN RPAREN LSPAREN RSPAREN LCPAREN RCPAREN CONST SEMI LCMET RCMET INT BOOL FLOAT VEC2 VEC3 VEC4 BVEC2 BVEC3 BVEC4 IVEC2 IVEC3 IVEC4 LIT DP3 RSQ IF ELSE WHILE
 
 
 %start    program

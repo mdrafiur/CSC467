@@ -30,7 +30,7 @@ DIGIT       [0-9]
 SIGN	    [-+]
 INT	    {SIGN}?{DIGIT}+
 FLOAT       {SIGN}?{DIGIT}*\.{DIGIT}*
-IDENTIFIER  [a-zA-Z_]+([a-zA-Z0-9_])*
+IDENTIFIER  [a-zA-Z_][a-zA-Z0-9_]*
 BOOL        "true"|"false"
 
 %%

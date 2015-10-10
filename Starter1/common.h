@@ -11,6 +11,7 @@
 
 #include <stdio.h> /* for FILE */
 #include <limits.h>
+#include <float.h>
 
  
 /**********************************************************************

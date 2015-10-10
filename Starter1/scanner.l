@@ -27,7 +27,9 @@ int yyline = 1;
 WS          [ \t]
 LETTER      [a-zA-Z]
 DIGIT       [0-9]
-FLOAT       [0-9]*\.[0-9]*
+SIGN	    [-+]
+INT	    {SIGN}?{DIGIT}+
+FLOAT       {SIGN}?{DIGIT}*\.{DIGIT}*
 IDENTIFIER  [a-zA-Z_]+([a-zA-Z0-9_])*
 BOOL        "true"|"false"
 
@@ -88,9 +90,10 @@ BOOL        "true"|"false"
 "else"      {yTRACE(ELSE);     return ELSE;}
 "while"     {yTRACE(WHILE);    return WHILE;}
 
-{DIGIT}+ {
-    if(atoi(yytext) > MAX_INTEGER)
-        yERROR("Maximum Integer size exceeded.");
+{INT} {
+    Ival = atoi(yytext);	
+    if(Ival < INT_MIN || Ival > INT_MAX)
+        yERROR("Error: Integer Overflow or Underflow");
   
     else {
         yTRACE(INT);
@@ -98,6 +101,16 @@ BOOL        "true"|"false"
     }
 }
 
+{FLOAT} {
+    Fval = atoi(yytext);	
+    if(Fval < FLT_MIN || Fval > FLT_MAX)
+        yERROR("Error: Floating point Overflow or Underflow");
+  
+    else {
+        yTRACE(FLOAT);
+        return FLOAT;
+    }
+}
 {IDENTIFIER} {
     if (strlen(yytext) > MAX_IDENTIFIER)
         yERROR("Maximum Identifier length exceeded.");

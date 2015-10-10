@@ -65,7 +65,7 @@ BOOL        "true"|"false"
 
 "const"     {yTRACE(CONST);    return CONST;}
 ";"         {yTRACE(SEMI);     return SEMI;}
-","         {yTRACE(COMMA);     return COMMA;}
+","         {yTRACE(COMMA);    return COMMA;}
 
 "int"       {yTRACE(TYPE);     return TYPE;}
 "bool"      {yTRACE(TYPE);     return TYPE;}

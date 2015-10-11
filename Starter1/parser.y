@@ -98,52 +98,51 @@ tokens
   ;
 // TODO: replace myToken with the token the you defined.
 token
- :TYPE_FLOAT  {fprintf(outputFile, "TYPE_FLOAT ");}
- |TYPE_INT  {fprintf(outputFile, "TYPE_INT ");}
- |TYPE_BOOL  {fprintf(outputFile, "TYPE_BOOL ");}
- |TYPE_VEC2  {fprintf(outputFile, "TYPE_VEC2 ");}
- |TYPE_VEC3  {fprintf(outputFile, "TYPE_VEC3 ");}
- |TYPE_VEC4  {fprintf(outputFile, "TYPE_VEC4 ");}
- |TYPE_BVEC2  {fprintf(outputFile, "TYPE_BVEC2 ");}
- |TYPE_BVEC3  {fprintf(outputFile, "TYPE_BVEC3 ");}
- |TYPE_BVEC4  {fprintf(outputFile, "TYPE_BVEC4 ");}
- |TYPE_IVEC2  {fprintf(outputFile, "TYPE_IVEC2 ");}
- |TYPE_IVEC3  {fprintf(outputFile, "TYPE_IVEC3 ");}
- |TYPE_IVEC4  {fprintf(outputFile, "TYPE_IVEC4 ");}
- |LPAREN      {fprintf(outputFile, "LPAREN");}
- |RPAREN  {fprintf(outputFile, "RPAREN");}
- |LSPAREN  {fprintf(outputFile, "LSPAREN");}
- |RSPAREN  {fprintf(outputFile, "RSPAREN");}
- |LCPAREN  {fprintf(outputFile, "LCPAREN");}
- |RCPAREN  {fprintf(outputFile, "RCPAREN");}
- |IF  {fprintf(outputFile, "IF");}
- |WHILE  {fprintf(outputFile, "WHILE");}
- |ELSE  {fprintf(outputFile, "ELSE");}
- |CONST  {fprintf(outputFile, "CONST");}
- |SEMI  {fprintf(outputFile, ";");}
- |COMMA  {fprintf(outputFile, "COMMA");}
- |NEWLINE  {fprintf(outputFile, "\n");}
- |MULT  {fprintf(outputFile, "MULT");}
- |DIVIDE  {fprintf(outputFile, "DIVIDE");}
- |PLUS  {fprintf(outputFile, "PLUS");}
- |MINUS  {fprintf(outputFile, "MINUS");}
-|SQUARE  {fprintf(outputFile, "SQUARE");}
- |FALSE  {fprintf(outputFile, "PLUS");}
-|TRUE  {fprintf(outputFile, "TRUE");}
-|FALSE  {fprintf(outputFile, "FALSE");}
-|FUNCNAME  {fprintf(outputFile, "FUNCNAME");}
-|AND  {fprintf(outputFile, "AND");}
-|OR  {fprintf(outputFile, "OR");}
-|EQL  {fprintf(outputFile, "EQL");}
-|NEQL  {fprintf(outputFile, "NEQL");}
-|GTR  {fprintf(outputFile, "GTR");}
-|LSS  {fprintf(outputFile, "LSS");}
-|LEQ  {fprintf(outputFile, "LEQ");}
-|NOT  {fprintf(outputFile, "NOT");}
-|INT  {fprintf(outputFile, "INT");}
-|FLOAT  {fprintf(outputFile, "FLOAT");}
-|IDENTIFIER  {fprintf(outputFile, "IDENTIFIER");}
-|INT  {fprintf(outputFile, "INT");}
+ :TYPE_FLOAT 
+ |TYPE_INT  
+ |TYPE_BOOL  
+ |TYPE_VEC2
+ |TYPE_VEC3  
+ |TYPE_VEC4
+ |TYPE_BVEC2  
+ |TYPE_BVEC3  
+ |TYPE_BVEC4  
+ |TYPE_IVEC2 
+ |TYPE_IVEC3  
+ |TYPE_IVEC4  
+ |LPAREN      
+ |RPAREN 
+ |LSPAREN  
+ |RSPAREN  
+ |LCPAREN  
+ |RCPAREN  
+ |IF  
+ |WHILE  
+ |ELSE  
+ |CONST  
+ |SEMI 
+ |COMMA  
+ |NEWLINE  
+ |MULT  
+ |DIVIDE  
+ |PLUS  
+ |MINUS  
+|SQUARE  
+|TRUE  
+|FALSE  
+|FUNCNAME 
+|AND  
+|OR  
+|EQL  
+|NEQL 
+|GTR  
+|LSS  
+|LEQ  
+|NOT
+|INT  
+|FLOAT  
+|IDENTIFIER  
+|INT 
 %%
 
 /***********************************************************************ol

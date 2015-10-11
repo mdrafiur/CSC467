@@ -12,6 +12,7 @@
 #include <stdio.h> /* for FILE */
 #include <limits.h>
 #include <float.h>
+#include <math.h>
 
  
 /**********************************************************************
@@ -27,6 +28,8 @@
 #define MAX_IDENTIFIER 32
 #define MAX_TEXT       256
 #define MAX_INTEGER    32767
+#define MAX_INT        pow(2,21)
+#define MIN_INT        -MAX_INT
 
 /********************************************************************** 
  * External declarations for variables declared in globalvars.c.

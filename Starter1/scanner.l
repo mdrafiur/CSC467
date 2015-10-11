@@ -41,8 +41,8 @@ IDENTIFIER  [a-zA-Z_][a-zA-Z0-9_]*
 "/"         {yTRACE(DIVIDE);  return DIVIDE;}
 "^"         {yTRACE(SQUARE);  return SQUARE;}
 
-"true"      {yTRACE(BOOL_TRUE);    return BOOL_TRUE;}
-"false"     {yTRACE(BOOL_FALSE);   return BOOL_FALSE;}
+"true"      {yTRACE(BOOL_TRUE);    return TRUE;}
+"false"     {yTRACE(BOOL_FALSE);   return FALSE;}
 
 "!"         {yTRACE(NOT);    return NOT;}
 "&&"        {yTRACE(AND);    return AND;}

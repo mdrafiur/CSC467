@@ -68,7 +68,7 @@ extern int yyline;        /* variable holding current line number   */
 %token          TYPE_FLOAT TYPE_INT TYPE_BOOL TYPE_VEC2 TYPE_VEC3 TYPE_VEC4 TYPE_BVEC2 TYPE_BVEC3 TYPE_BVEC4 TYPE_IVEC2 TYPE_IVEC3 TYPE_IVEC4
 %token          LPAREN RPAREN LSPAREN RSPAREN LCPAREN RCPAREN
 %token          CONST SEMI COMMA NEWLINE
-%token          PLUS MINUS MULT DIVIDE SQUARE
+%token          PLUS MINUS MULT DIVIDE EXP
 %token          FALSE TRUE
 %token          FUNCNAME
 %token          IF WHILE ELSE

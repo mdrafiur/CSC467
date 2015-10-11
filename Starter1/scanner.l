@@ -101,7 +101,7 @@ IDENTIFIER  [a-zA-Z_][a-zA-Z0-9_]*
         yERROR("Error: Integer Overflow or Underflow");
   
     else {
-    	yylval.int = intVal;
+    	yylval.intNum = intVal;
         yTRACE(INT);
         return INT;
     }
@@ -113,7 +113,7 @@ IDENTIFIER  [a-zA-Z_][a-zA-Z0-9_]*
         yERROR("Error: Floating point Overflow or Underflow");
   
     else {
-    	yylval.float = floatVal;
+    	yylval.floatNum = floatVal;
         yTRACE(FLOAT);
         return FLOAT;
     }

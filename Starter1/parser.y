@@ -126,15 +126,24 @@ token
  |MULT  {fprintf(outputFile, "MULT");}
  |DIVIDE  {fprintf(outputFile, "DIVIDE");}
  |PLUS  {fprintf(outputFile, "PLUS");}
- |PLUS  {fprintf(outputFile, "PLUS");}
-|PLUS  {fprintf(outputFile, "PLUS");}
- |PLUS  {fprintf(outputFile, "PLUS");}
-|PLUS  {fprintf(outputFile, "PLUS");}
-|PLUS  {fprintf(outputFile, "PLUS");}
-|PLUS  {fprintf(outputFile, "PLUS");}
-|PLUS  {fprintf(outputFile, "PLUS");}
-|PLUS  {fprintf(outputFile, "PLUS");}
-|PLUS  {fprintf(outputFile, "PLUS");}
+ |MINUS  {fprintf(outputFile, "MINUS");}
+|SQUARE  {fprintf(outputFile, "SQUARE");}
+ |FALSE  {fprintf(outputFile, "PLUS");}
+|TRUE  {fprintf(outputFile, "TRUE");}
+|FALSE  {fprintf(outputFile, "FALSE");}
+|FUNCNAME  {fprintf(outputFile, "FUNCNAME");}
+|AND  {fprintf(outputFile, "AND");}
+|OR  {fprintf(outputFile, "OR");}
+|EQL  {fprintf(outputFile, "EQL");}
+|NEQL  {fprintf(outputFile, "NEQL");}
+|GTR  {fprintf(outputFile, "GTR");}
+|LSS  {fprintf(outputFile, "LSS");}
+|LEQ  {fprintf(outputFile, "LEQ");}
+|NOT  {fprintf(outputFile, "NOT");}
+|INT  {fprintf(outputFile, "INT");}
+|FLOAT  {fprintf(outputFile, "FLOAT");}
+|IDENTIFIER  {fprintf(outputFile, "IDENTIFIER");}
+|INT  {fprintf(outputFile, "INT");}
 %%
 
 /***********************************************************************ol

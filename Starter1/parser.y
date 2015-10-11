@@ -98,21 +98,43 @@ tokens
   ;
 // TODO: replace myToken with the token the you defined.
 token
- :TYPE_FLOAT  {fprintf(outputFile, "TYPE_FLOAT");}
- |TYPE_FLOAT  {fprintf(outputFile, "TYPE_FLOAT");}
- |TYPE_FLOAT  {fprintf(outputFile, "TYPE_FLOAT");}
- |TYPE_FLOAT  {fprintf(outputFile, "TYPE_FLOAT");}
- |TYPE_FLOAT  {fprintf(outputFile, "TYPE_FLOAT");}
- |TYPE_FLOAT  {fprintf(outputFile, "TYPE_FLOAT");}
- |TYPE_FLOAT  {fprintf(outputFile, "TYPE_FLOAT");}
- |TYPE_FLOAT  {fprintf(outputFile, "TYPE_FLOAT");}
- |TYPE_FLOAT  {fprintf(outputFile, "TYPE_FLOAT");}
- |TYPE_FLOAT  {fprintf(outputFile, "TYPE_FLOAT");}
- |TYPE_FLOAT  {fprintf(outputFile, "TYPE_FLOAT");}
- |TYPE_FLOAT  {fprintf(outputFile, "TYPE_FLOAT");}
- 
-
-
+ :TYPE_FLOAT  {fprintf(outputFile, "TYPE_FLOAT ");}
+ |TYPE_INT  {fprintf(outputFile, "TYPE_INT ");}
+ |TYPE_BOOL  {fprintf(outputFile, "TYPE_BOOL ");}
+ |TYPE_VEC2  {fprintf(outputFile, "TYPE_VEC2 ");}
+ |TYPE_VEC3  {fprintf(outputFile, "TYPE_VEC3 ");}
+ |TYPE_VEC4  {fprintf(outputFile, "TYPE_VEC4 ");}
+ |TYPE_BVEC2  {fprintf(outputFile, "TYPE_BVEC2 ");}
+ |TYPE_BVEC3  {fprintf(outputFile, "TYPE_BVEC3 ");}
+ |TYPE_BVEC4  {fprintf(outputFile, "TYPE_BVEC4 ");}
+ |TYPE_IVEC2  {fprintf(outputFile, "TYPE_IVEC2 ");}
+ |TYPE_IVEC3  {fprintf(outputFile, "TYPE_IVEC3 ");}
+ |TYPE_IVEC4  {fprintf(outputFile, "TYPE_IVEC4 ");}
+ |LPAREN      {fprintf(outputFile, "LPAREN");}
+ |RPAREN  {fprintf(outputFile, "RPAREN");}
+ |LSPAREN  {fprintf(outputFile, "LSPAREN");}
+ |RSPAREN  {fprintf(outputFile, "RSPAREN");}
+ |LCPAREN  {fprintf(outputFile, "LCPAREN");}
+ |RCPAREN  {fprintf(outputFile, "RCPAREN");}
+ |IF  {fprintf(outputFile, "IF");}
+ |WHILE  {fprintf(outputFile, "WHILE");}
+ |ELSE  {fprintf(outputFile, "ELSE");}
+ |CONST  {fprintf(outputFile, "CONST");}
+ |SEMI  {fprintf(outputFile, ";");}
+ |COMMA  {fprintf(outputFile, "COMMA");}
+ |NEWLINE  {fprintf(outputFile, "\n");}
+ |MULT  {fprintf(outputFile, "MULT");}
+ |DIVIDE  {fprintf(outputFile, "DIVIDE");}
+ |PLUS  {fprintf(outputFile, "PLUS");}
+ |PLUS  {fprintf(outputFile, "PLUS");}
+|PLUS  {fprintf(outputFile, "PLUS");}
+ |PLUS  {fprintf(outputFile, "PLUS");}
+|PLUS  {fprintf(outputFile, "PLUS");}
+|PLUS  {fprintf(outputFile, "PLUS");}
+|PLUS  {fprintf(outputFile, "PLUS");}
+|PLUS  {fprintf(outputFile, "PLUS");}
+|PLUS  {fprintf(outputFile, "PLUS");}
+|PLUS  {fprintf(outputFile, "PLUS");}
 %%
 
 /***********************************************************************ol

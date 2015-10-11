@@ -78,9 +78,18 @@ IDENTIFIER  [a-zA-Z_][a-zA-Z0-9_]*
 "ivec3"     {yTRACE(TYPE_IVEC3);   return TYPE_IVEC3;}
 "ivec4"     {yTRACE(TYPE_IVEC4);   return TYPE_IVEC4;}
 
-"lit"       {yylval.func_1 = 1;	yTRACE(FUNCNAME); return FUNCNAME;}
-"dp3"       {yylval.func_2 = 2; yTRACE(FUNCNAME); return FUNCNAME;}
-"rsq"       {yylval.func_3 = 3; yTRACE(FUNCNAME); return FUNCNAME;}
+"lit"       {yylval.func_lit = (char *)malloc((yyleng+1)*(sizeof(char)));
+             strcpy(yylval.funcLit, yytext);	
+             yTRACE(FUNCNAME); 
+             return FUNCNAME;}
+"dp3"       {yylval.func_dp3 = (char *)malloc((yyleng+1)*(sizeof(char)));
+             strcpy(yylval.func_dp3, yytext); 
+             yTRACE(FUNCNAME); 
+             return FUNCNAME;}
+"rsq"       {yylval.func_rsq = (char *)malloc((yyleng+1)*(sizeof(char)));
+             strcpy(yylval.func_rsq, yytext); 
+             yTRACE(FUNCNAME); 
+             return FUNCNAME;}
 
 "if"        {yTRACE(IF);       return IF;}       
 "else"      {yTRACE(ELSE);     return ELSE;}

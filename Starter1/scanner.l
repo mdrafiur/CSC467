@@ -25,7 +25,6 @@ int yyline = 1;
 %x F_COMMENT
 
 WS          [ \t]
-LETTER      [a-zA-Z]
 DIGIT       [0-9]
 IDENTIFIER  [a-zA-Z_][a-zA-Z0-9_]*
 

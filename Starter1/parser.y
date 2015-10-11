@@ -103,6 +103,12 @@ token
  |TYPE_FLOAT  {fprintf(outputFile, "TYPE_FLOAT");}
  |TYPE_FLOAT  {fprintf(outputFile, "TYPE_FLOAT");}
  |TYPE_FLOAT  {fprintf(outputFile, "TYPE_FLOAT");}
+ |TYPE_FLOAT  {fprintf(outputFile, "TYPE_FLOAT");}
+ |TYPE_FLOAT  {fprintf(outputFile, "TYPE_FLOAT");}
+ |TYPE_FLOAT  {fprintf(outputFile, "TYPE_FLOAT");}
+ |TYPE_FLOAT  {fprintf(outputFile, "TYPE_FLOAT");}
+ |TYPE_FLOAT  {fprintf(outputFile, "TYPE_FLOAT");}
+ |TYPE_FLOAT  {fprintf(outputFile, "TYPE_FLOAT");}
  
 
 

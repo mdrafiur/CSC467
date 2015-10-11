@@ -94,7 +94,8 @@ IDENTIFIER  [a-zA-Z_][a-zA-Z0-9_]*
 "else"      {yTRACE(ELSE);     return ELSE;}
 "while"     {yTRACE(WHILE);    return WHILE;}
 
-0|[1-9][0-9]* {
+0 	    {yylval.intNum = 0;    yTRACE(INT);    return INT;}
+[1-9][0-9]* {
     intVal = atoi(yytext);	
     if(intVal < MIN_INT || intVal > MAX_INT)
         yERROR("Error: Integer Overflow or Underflow");

@@ -1,7 +1,8 @@
 %{
 /**********************************************************************
  *
- * **YOUR GROUP INFO SHOULD GO HERE**
+ * Md Rafiur Rashid
+ * 998544240
  *
  *  Interface to the scanner module for CSC467 course project
  **********************************************************************/

@@ -94,12 +94,12 @@ IDENTIFIER  [a-zA-Z_][a-zA-Z0-9_]*
 "else"      {yTRACE(ELSE);     return ELSE;}
 "while"     {yTRACE(WHILE);    return WHILE;}
 
-0 	    {yylval.intNum = 0;    yTRACE(INT);    return INT;}
+0 	    {yylval.intNum = 0; yTRACE(INT); return INT;}
+
 [1-9][0-9]* {
     intVal = atoi(yytext);	
     if(intVal < MIN_INT || intVal > MAX_INT) {
         yERROR("Error: Integer Overflow or Underflow");
-        yyterminate();
     }
     else {
     	yylval.intNum = intVal;
@@ -114,7 +114,6 @@ IDENTIFIER  [a-zA-Z_][a-zA-Z0-9_]*
     floatVal = atoi(yytext);
     if(floatVal < FLT_MIN || floatVal > FLT_MAX) {
         yERROR("Error: Floating point Overflow or Underflow");
-  	yyterminate();
     }
     else {
     	yylval.floatNum = floatVal;
@@ -123,12 +122,11 @@ IDENTIFIER  [a-zA-Z_][a-zA-Z0-9_]*
     }
 }
 
-0{DIGIT}+  {yERROR("Error: Octal numbers not supported.");  yyterminate();}
+0{DIGIT}+  {yERROR("Error: Octal numbers not supported.");}
 
 {IDENTIFIER} {
     if (strlen(yytext) > MAX_IDENTIFIER) {
         yERROR("Maximum Identifier length exceeded.");
-   	yyterminate();
     }
     else {
     	yylval.var = (char *)malloc((yyleng+1)*(sizeof(char)));
@@ -138,9 +136,6 @@ IDENTIFIER  [a-zA-Z_][a-zA-Z0-9_]*
     }
 }
 
-.           {yERROR("Unknown token"); yyterminate();}
-
-%%
 "/*"        {
               int c1      = 0;
               int c2      = yyinput();
@@ -160,4 +155,5 @@ IDENTIFIER  [a-zA-Z_][a-zA-Z0-9_]*
               }
             }
 
+.           {yERROR("Unknown token"); yyterminate();}
 %%

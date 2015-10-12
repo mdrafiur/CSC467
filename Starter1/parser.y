@@ -127,7 +127,7 @@ token
  |DIVIDE  
  |PLUS  
  |MINUS  
-|SQUARE  
+|EXP
 |TRUE  
 |FALSE  
 |FUNCNAME 
@@ -141,8 +141,7 @@ token
 |NOT
 |INT  
 |FLOAT  
-|IDENTIFIER  
-|INT 
+|IDENTIFIER
 %%
 
 /***********************************************************************ol

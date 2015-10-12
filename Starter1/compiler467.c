@@ -32,9 +32,9 @@
  **********************************************************************/
 #define DEFAULT_INPUT_FILE     stdin
 #define DEFAULT_OUTPUT_FILE    stdout
-#define DEFAULT_ERROR_FILE     ErrorFile.txt
+#define DEFAULT_ERROR_FILE     stderr
 #define DEFAULT_DUMP_FILE      stdout
-#define DEFAULT_TRACE_FILE     TraceFile.txt
+#define DEFAULT_TRACE_FILE     stdout
 #define DEFAULT_RUN_INPUT_FILE stdin
 
 void  getOpts   (int numargs, char **argstr);

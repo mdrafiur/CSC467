@@ -82,13 +82,14 @@ enum {
 %token <as_int>   INT_C
 %token <as_str>   ID
 
-%left     '|'
-%left     '&'
-%nonassoc '=' NEQ '<' LEQ '>' GEQ
-%left     '+' '-'
-%left     '*' '/'
-%right    '^'
-%nonassoc '!' UMINUS
+%left     OR                        
+%left     AND                       
+%left     EQ NEQ '<' LEQ '>' GEQ    
+%left     '+' '-'                   
+%left     '*' '/'                   
+%right    '^'                       
+%right    '!' UMINUS                
+%left     '(' '['                   
 
 %start    program
 
@@ -174,27 +175,48 @@ expression
       {yTRACE ("expression -> constructor \n")}
   | function 
       {yTRACE ("expression -> function \n")}
-	| INT_C { yTRACE ("expression -> INT_C \n");}
-	| FLOAT_C { yTRACE ("expression -> FLOAT_C \n");}
-	| variable { yTRACE ("expression -> variable \n");}
-	| '-' expression %prec UMINUS { yTRACE ("expression -> UMINUS expression  \n");}
-	| '!' expression { yTRACE ("expression -> ! expression  \n");}
-	| expression '-' expression { yTRACE ("expression -> expression - expression \n");}
-	| expression '+' expression { yTRACE ("expression -> expression + expression \n");}
-	| expression '*' expression { yTRACE ("expression -> expression * expression \n");}
-	| expression '/' expression { yTRACE ("expression -> expression / expression \n");}
-	| expression '^' expression { yTRACE ("expression -> expression ^ expression \n");}
-	| expression '<' expression { yTRACE ("expression -> expression < expression \n");}
-	| expression '>' expression { yTRACE ("expression -> expression > expression \n");}
-	| expression AND expression { yTRACE ("expression -> expression AND expression \n");}
-	| expression OR expression { yTRACE ("expression -> expression OR expression \n");}
-	| expression NEQ expression { yTRACE ("expression -> expression NEQ expression \n");}
-	| expression LEQ expression { yTRACE ("expression -> expression LEQ expression \n");}
-	| expression GEQ expression { yTRACE ("expression -> expression GEQ expression \n");}
-	| expression EQ expression { yTRACE ("expression -> expression EQ expression \n");}	
-	| '(' expression ')' { yTRACE ("expression -> ( expression ) \n");}
-	| TRUE_C { yTRACE ("expression -> TRUE_C \n");}
-	| FALSE_C { yTRACE ("expression -> FALSE_C \n");}
+  | INT_C 
+      {yTRACE ("expression -> INT_C \n")}
+  | FLOAT_C 
+      {yTRACE ("expression -> FLOAT_C \n")}
+  | variable 
+      {yTRACE ("expression -> variable \n")}
+  | '-' expression %prec UMINUS 
+      {yTRACE ("expression -> UMINUS expression \n")}
+  | '!' expression 
+      {yTRACE ("expression -> ! expression \n")}    
+  | expression AND expression 
+      {yTRACE("expression -> expression AND expression \n")}
+  | expression OR expression 
+      {yTRACE("expression -> expression OR expression \n")}
+  | expression EQ expression 
+      {yTRACE("expression -> expression EQ expression \n")}
+  | expression NEQ expression 
+      {yTRACE("expression -> expression NEQ expression \n")}
+  | expression '<' expression 
+      {yTRACE("expression -> expression < expression \n")}
+  | expression LEQ expression 
+      {yTRACE("expression -> expression LEQ expression \n")}
+  | expression '>' expression 
+      {yTRACE("expression -> expression > expression \n")}
+  | expression GEQ expression 
+      {yTRACE("expression -> expression GEQ expression \n")}
+  | expression '+' expression 
+      {yTRACE("expression -> expression + expression \n")}
+  | expression '-' expression 
+      {yTRACE("expression -> expression - expression \n")}
+  | expression '*' expression 
+      {yTRACE("expression -> expression * expression \n")}
+  | expression '/' expression 
+      {yTRACE("expression -> expression / expression \n")}
+  | expression '^' expression 
+      {yTRACE("expression -> expression ^ expression \n")}
+  | TRUE_C
+      {yTRACE("expression -> TRUE_C \n")}
+  | FALSE_C
+      {yTRACE("expression -> FALSE_C \n")}
+  | '(' expression ')'
+      {yTRACE("expression -> ( expression ) \n")}
   ;
   
 variable
@@ -268,49 +290,6 @@ arguments
   | expression 
       {yTRACE ("arguments -> expression \n")}
   ;
-
-token
-  : ID 
-  | AND
-  | OR
-  | NEQ
-  | LEQ
-  | GEQ
-  | EQ
-  | TRUE_C
-  | FALSE_C
-  | INT_C
-  | FLOAT_C
-  | CONST
-  | ELSE
-  | IF
-  | WHILE
-  | FLOAT_T
-  | INT_T
-  | BOOL_T
-  | VEC_T
-  | IVEC_T
-  | BVEC_T
-  | FUNC               
-  | '+'
-  | '-'
-  | '*'
-  | '/'
-  | '^'  
-  | '!'
-  | '='
-  | '<'
-  | '>'   
-  | ','
-  | ';'
-  | '('
-  | ')'
-  | '['
-  | ']'
-  | '{'
-  | '}'                                    
-  ;
-
 
 %%
 

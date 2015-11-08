@@ -106,21 +106,23 @@ program
   : scope 
       {yTRACE("program -> scope\n")} 
   ;
+  
 scope
   : '{' declarations statements '}'
      {yTRACE("scope -> { declarations statements }\n")}
   ;
+  
 declarations
   : declarations declaration
       {yTRACE("declarations -> declarations declaration\n")}
-  | 
+  | /* empty */
       {yTRACE("declarations -> \n")}
   ;
 
 statements
   : statements statement
       {yTRACE("statements -> statements statement\n")}
-  | 
+  | /* empty */
       {yTRACE("statements -> \n")}
   ;
 
@@ -131,7 +133,7 @@ declaration
       {yTRACE("declaration -> type ID = expression ;\n")}
   | CONST type ID '=' expression ';'
       {yTRACE("declaration -> CONST type ID = expression ;\n")}
-  | 
+  | /* empty */
       {yTRACE("statements -> \n")}  
   ;
 
@@ -151,7 +153,7 @@ statement
 else_statement
   : ELSE statement 
       {yTRACE ("else_statement -> ELSE statement \n")}
-  |
+  | /* empty */
       {yTRACE ("else_statement -> \n")}
   ;
   
@@ -280,7 +282,7 @@ function_name
 arguments_opt
   : arguments 
       {yTRACE ("arguments_opt -> arguments \n")}
-  | 
+  | /* empty */
       { yTRACE ("arguments -> \n")}
   ;
   

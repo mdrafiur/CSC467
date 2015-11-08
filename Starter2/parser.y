@@ -109,7 +109,7 @@ program
   
 scope
   : '{' declarations statements '}'
-     {yTRACE("scope -> { declarations statements }\n")}
+      {yTRACE("scope -> { declarations statements }\n")}
   ;
   
 declarations

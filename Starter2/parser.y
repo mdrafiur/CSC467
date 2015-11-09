@@ -71,7 +71,7 @@ enum {
 %token          CONST
 %token          FALSE_C TRUE_C
 %token          FUNC
-%token          WHILE IF ELSE
+%token          WHILE IF
 %token          AND OR NEQ EQ LEQ GEQ
 
 // links specific values of tokens to yyval
@@ -82,6 +82,8 @@ enum {
 %token <as_int>   INT_C
 %token <as_str>   ID
 
+%nonassoc IFX
+%nonassoc ELSE
 %left     OR                        
 %left     AND                       
 %left     EQ NEQ '<' LEQ '>' GEQ    
@@ -114,14 +116,14 @@ scope
 declarations
   : declarations declaration
       {yTRACE("declarations -> declarations declaration\n")}
-  | /*empty */
+  | 
       {yTRACE("declarations -> \n")}
   ;
 
 statements
   : statements statement
       {yTRACE("statements -> statements statement\n")}
-  | /*empty */
+  | 
       {yTRACE("statements -> \n")}
   ;
 
@@ -137,8 +139,10 @@ declaration
 statement
   : variable '=' expression ';'
       {yTRACE("statement -> variable = expression ;\n")}
-  | IF '(' expression ')' statement else_statement
-      {yTRACE("statement -> IF ( expression ) statement else_statement \n")}
+  | IF '(' expression ')' statement %prec IFX
+      {yTRACE("statement -> IF ( expression ) statement \n")}
+  | IF '(' expression ')' statement ELSE statement
+	{yTRACE("statement -> IF ( expression ) statement ELSE statement \n")}
   | WHILE '(' expression ')' statement  
       {yTRACE("statement -> WHILE ( expression ) statement \n")}
   | scope 
@@ -147,13 +151,6 @@ statement
       {yTRACE("statement -> ; \n")}
   ;
 
-else_statement
-  : ELSE statement 
-      {yTRACE ("else_statement -> ELSE statement \n")}
-  | /* empty */
-      {yTRACE ("else_statement -> \n")}
-  ;
-  
 type
   : INT_T 
       {yTRACE ("type -> INT_T \n")}
@@ -180,10 +177,36 @@ expression
       {yTRACE ("expression -> FLOAT_C \n")}
   | variable 
       {yTRACE ("expression -> variable \n")}
-  | unary_opt expression
-	  {yTRACE ("expression -> unary_opt expression \n")}
-  | expression binary_opt expression
-	  {yTRACE ("expression -> exprsssion binary_opt expression \n")}
+  | '-' expression %prec UMINUS 
+     {yTRACE ("expression -> unary_opt UMINUS expression \n")}
+  | '!' expression 
+      {yTRACE ("expression -> unary_opt ! expression \n")}    
+  | expression AND expression 
+      {yTRACE("expression -> expression binary_opt AND expression \n")}
+  | expression OR expression 
+      {yTRACE("expression -> expression binary_opt OR expression \n")}
+  | expression EQ expression 
+      {yTRACE("expression -> expression binary_opt EQ expression \n")}
+  | expression NEQ expression 
+      {yTRACE("expression -> expression binary_opt NEQ expression \n")}
+  | expression '<' expression 
+      {yTRACE("expression -> expression binary_opt < expression \n")}
+  | expression LEQ expression 
+      {yTRACE("expression -> expression binary_opt LEQ expression \n")}
+  | expression '>' expression 
+      {yTRACE("expression -> expression binary_opt > expression \n")}
+  | expression GEQ expression 
+      {yTRACE("expression -> expression binary_opt GEQ expression \n")}
+  | expression '+' expression 
+      {yTRACE("expression -> expression binary_opt + expression \n")}
+  | expression '-' expression 
+      {yTRACE("expression -> expression binary_opt - expression \n")}
+  | expression '*' expression 
+      {yTRACE("expression -> expression binary_opt * expression \n")}
+  | expression '/' expression 
+      {yTRACE("expression -> expression binary_opt / expression \n")}
+  | expression '^' expression 
+      {yTRACE("expression -> expression binary_opt ^ expression \n")}
   | TRUE_C
       {yTRACE("expression -> TRUE_C \n")}
   | FALSE_C
@@ -198,43 +221,8 @@ variable
   | ID '[' INT_C ']' 
       {yTRACE ("variable -> ID [ INT_C ] \n")}
   ;
-  
-unary_opt
-  : '!' 
-      {yTRACE ("unary_opt -> ! \n")}
-  | '-' %prec UMINUS
-      {yTRACE ("unary_opt -> - \n")}
-  ;
-  
-binary_opt 
-  : AND 
-      {yTRACE ("binary_opt -> AND \n")}
-  | OR 
-      {yTRACE ("binary_opt -> OR \n")}
-  | EQ 
-      {yTRACE ("binary_opt -> EQ \n")}
-  | NEQ  
-      {yTRACE ("binary_opt -> NEQ \n")}
-  | '<' 
-      {yTRACE ("binary_opt -> < \n")}
-  | LEQ  
-      {yTRACE ("binary_opt -> LEQ \n")}
-  | '>' 
-      {yTRACE ("binary_opt -> > \n")}
-  | GEQ  
-      {yTRACE ("binary_opt -> GEQ \n")}
-  | '+' 
-      {yTRACE ("binary_opt -> + \n")}
-  | '-' 
-      {yTRACE ("binary_opt -> - \n")}
-  | '*' 
-      {yTRACE ("binary_opt -> * \n")}
-  | '/' 
-      {yTRACE ("binary_opt -> / \n")}
-  | '^' 
-      {yTRACE ("binary_opt -> ^ \n")}
-  ;
-  
+ 
+
 constructor
   : type '(' arguments_opt ')' 
       {yTRACE ("constructor -> type ( arguments_opt ) \n")}
@@ -253,7 +241,7 @@ function_name
 arguments_opt
   : arguments 
       {yTRACE ("arguments_opt -> arguments \n")}
-  | /*empty */
+  | 
       { yTRACE ("arguments -> \n")}
   ;
   
@@ -291,5 +279,3 @@ void yyerror(char* s) {
     fprintf(errorFile, ": Reading token %s\n", yytname[YYTRANSLATE(yychar)]);
   }
 }
-
-

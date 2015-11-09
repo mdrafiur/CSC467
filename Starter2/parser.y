@@ -82,8 +82,9 @@ enum {
 %token <as_int>   INT_C
 %token <as_str>   ID
 
-%nonassoc IFX
-%nonassoc ELSE
+//this is to solve the dangling if-else problem
+//the operators are defined in an order in which the one with lowest precedence gets defined first
+%right    IFX ELSE
 %left     OR                        
 %left     AND                       
 %left     EQ NEQ '<' LEQ '>' GEQ    
@@ -117,16 +118,17 @@ declarations
   : declarations declaration
       {yTRACE("declarations -> declarations declaration\n")}
   | 
-      {yTRACE("declarations -> \n")}
+      {yTRACE("declarations -> empty \n")}
   ;
 
 statements
   : statements statement
       {yTRACE("statements -> statements statement\n")}
   | 
-      {yTRACE("statements -> \n")}
+      {yTRACE("statements -> empty \n")}
   ;
 
+/*removed the epsilon to avoid conflicts*/
 declaration
   : type ID ';' 
       {yTRACE("declaration -> type ID ;\n")}
@@ -139,10 +141,11 @@ declaration
 statement
   : variable '=' expression ';'
       {yTRACE("statement -> variable = expression ;\n")}
-  | IF '(' expression ')' statement %prec IFX
-      {yTRACE("statement -> IF ( expression ) statement \n")}
   | IF '(' expression ')' statement ELSE statement
 	{yTRACE("statement -> IF ( expression ) statement ELSE statement \n")}
+  | IF '(' expression ')' statement %prec IFX
+      {yTRACE("statement -> IF ( expression ) statement \n")}
+  
   | WHILE '(' expression ')' statement  
       {yTRACE("statement -> WHILE ( expression ) statement \n")}
   | scope 
@@ -166,6 +169,7 @@ type
       {yTRACE ("type -> VEC_T \n")}
   ;
   
+
 expression
   : constructor 
       {yTRACE ("expression -> constructor \n")}
@@ -177,6 +181,7 @@ expression
       {yTRACE ("expression -> FLOAT_C \n")}
   | variable 
       {yTRACE ("expression -> variable \n")}
+/*use %prec to define unary minus and solve conflicts between "expression binary_opt expression" and "unary_opt expression*/
   | '-' expression %prec UMINUS 
      {yTRACE ("expression -> unary_opt UMINUS expression \n")}
   | '!' expression 
@@ -242,7 +247,7 @@ arguments_opt
   : arguments 
       {yTRACE ("arguments_opt -> arguments \n")}
   | 
-      { yTRACE ("arguments -> \n")}
+      { yTRACE ("arguments -> empty \n")}
   ;
   
 arguments

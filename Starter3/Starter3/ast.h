@@ -59,7 +59,7 @@ typedef enum {
 
 typedef enum{
 	INT_T,
-        IVEC_T,
+    IVEC_T,
 	BOOL_T,
 	BVEC_T,
 	FLOAT_T,
@@ -94,6 +94,10 @@ struct node_ {
 		node* type;
 		char* id;
 	}type_declaration;
+	
+	struct{
+		int type_kind;
+	}type;
 
 	struct{
 		node* type;
@@ -128,15 +132,15 @@ struct node_ {
 	}scope_statement;
 
 	struct {
-		int op;
-      		node *right;
-    	} unary_expr;
+      int op;
+      node *right;
+    } unary_expr;
 
-    	struct {
-    		int op;
-        	node *left;
-        	node *right;
-	 } binary_expr;
+    struct {
+      int op;
+      node *left;
+      node *right;
+    } binary_expr;
 	
 	struct{
 		node* expression;
@@ -148,7 +152,7 @@ struct node_ {
 	}func_expr;
 	
 	struct{
-		node_type type;
+		node* type;
 		node* arguments_opt;
 	}type_expr;
 	
@@ -161,7 +165,7 @@ struct node_ {
 	}int_expr;
 
 	struct{
-		float number;
+		double number;
 	}float_expr;
 
 	struct{
@@ -191,10 +195,12 @@ struct node_ {
 	struct{
 		node* arguments;
 	}arguments_opt;
-
+	
 	struct{
 		int type_kind;
 	}type;
+
+
 
   };
 };

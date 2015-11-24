@@ -10,6 +10,7 @@
 #define DEBUG_PRINT_TREE 0
 
 node *ast = NULL;
+unsigned int scope_num = 0;
 
 node *ast_allocate(node_kind kind, ...) {
   va_list args;

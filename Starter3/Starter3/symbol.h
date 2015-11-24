@@ -1,6 +1,6 @@
 #ifndef _SYMBOL_H
 #define _SYMBOL_H
 
-void add_symtable(node *ast);
+void symbol_table(node *ast);
 #endif
 

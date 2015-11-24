@@ -90,6 +90,8 @@ int main (int argc, char *argv[]) {
 /* Phase 3: Call the AST dumping routine if requested */
   if (dumpAST)
     ast_print(ast);
+    
+  add_symtable(ast);
 /* Phase 4: Add code to call the code generation routine */
 /* TODO: call your code generation routine here */
   if (errorOccurred)

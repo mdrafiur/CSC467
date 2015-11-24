@@ -94,10 +94,6 @@ struct node_ {
 		node* type;
 		char* id;
 	}type_declaration;
-	
-	struct{
-		int type_kind;
-	}type;
 
 	struct{
 		node* type;
@@ -140,7 +136,7 @@ struct node_ {
     		int op;
         	node *left;
         	node *right;
-    } binary_expr;
+	 } binary_expr;
 	
 	struct{
 		node* expression;
@@ -196,7 +192,9 @@ struct node_ {
 		node* arguments;
 	}arguments_opt;
 
-
+	struct{
+		int type_kind;
+	}type;
 
   };
 };

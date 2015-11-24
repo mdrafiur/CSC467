@@ -42,6 +42,20 @@ typedef enum {
   DECLARATION_NODE      = (1 << 15)
 } node_kind;
 
+
+
+typedef enum{
+	INT_T,
+    IVEC_T,
+	BOOL_T,
+	BVEC_T,
+	FLOAT_T,
+	VEC_T
+}node_type;
+
+
+
+
 struct node_ {
 
   // an example of tagging each node with a type
@@ -49,8 +63,8 @@ struct node_ {
 
   union {
     struct {
-      // declarations?
-      // statements?
+       node *declarations ;
+       node *statements;
     } scope;
   
     struct {
@@ -64,7 +78,116 @@ struct node_ {
       node *right;
     } binary_expr;
 
-    // etc.
+    struct{
+		node* declarations;
+		node* declaration;
+	}declarations;
+
+	struct {
+		node* statements;
+		node* statement;
+	}statements;
+
+	struct{
+		node* variable;
+		node* expression;
+	}assign_statement;
+
+	struct{
+		node* codition;
+		node* statement;
+	}if_statement;
+
+	struct{
+		node* condition;
+		node* statement;
+		node* else_statement;
+
+	}if_else_statement;
+
+	struct{
+		node* scope;
+
+	}scope_statement;
+
+	struct{
+		node* expression;
+	}brackets_expr;
+	
+
+	struct{
+		node_type type;
+		char* id;
+	}type_declaration;
+
+	struct{
+		node_type type;
+		char* id;
+		node* expression;
+	}assign_declaration;
+
+	struct{
+		node_type type;
+		char* id;
+		node* expression;
+	}const_declaration;
+
+	struct{
+		int func;
+		node* arguments_opt;
+	}func_expr;
+	
+	struct{
+		node_type type;
+		node* arguments_opt;
+	}type_expr;
+	
+	struct{
+		node* variable;
+	}var_expression;
+	
+	struct{
+		int number;
+	}int_expr;
+
+	struct{
+		float number;
+	}float_expr;
+
+	struct{
+		bool boolean;
+	}bool_expr;
+
+	
+	
+	struct{
+		char* id;
+
+	}id_variable;
+	
+	struct{
+		char* id;
+		int index;
+
+	}array_variable;
+
+
+	struct{
+		node* arguments;
+		node* expression;
+	}args_arguments;
+
+	struct{
+		node* expression;
+	}expr_arguments;
+
+	struct{
+		node* arguments;
+
+	}arguments_opt;
+
+
+
   };
 };
 

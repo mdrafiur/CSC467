@@ -51,14 +51,15 @@ typedef enum {
 	NARRAY_VARIABLE,
 	NARGS_ARGUMENTS,
 	NEXPR_ARGUMENTS,
-	NARGUMENTS_OPT
+	NARGUMENTS_OPT,
+	NTYPE
 } node_kind;
 
 
 
 typedef enum{
 	INT_T,
-    IVEC_T,
+        IVEC_T,
 	BOOL_T,
 	BVEC_T,
 	FLOAT_T,
@@ -131,14 +132,14 @@ struct node_ {
 	}scope_statement;
 
 	struct {
-      int op;
-      node *right;
-    } unary_expr;
+		int op;
+      		node *right;
+    	} unary_expr;
 
-    struct {
-      int op;
-      node *left;
-      node *right;
+    	struct {
+    		int op;
+        	node *left;
+        	node *right;
     } binary_expr;
 	
 	struct{
@@ -193,7 +194,6 @@ struct node_ {
 
 	struct{
 		node* arguments;
-
 	}arguments_opt;
 
 

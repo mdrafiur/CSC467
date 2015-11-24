@@ -19,27 +19,39 @@ typedef struct node_ node;
 extern node *ast;
 
 typedef enum {
-  UNKNOWN               = 0,
+	UNKNOWN  
+	NSCOPE,   
+	NDECLARATIONS,
+	NSTATEMENTS,
 
-  SCOPE_NODE            = (1 << 0),
-  
-  EXPRESSION_NODE       = (1 << 2),
-  UNARY_EXPRESION_NODE  = (1 << 2) | (1 << 3),
-  BINARY_EXPRESSION_NODE= (1 << 2) | (1 << 4),
-  INT_NODE              = (1 << 2) | (1 << 5), 
-  FLOAT_NODE            = (1 << 2) | (1 << 6),
-  IDENT_NODE            = (1 << 2) | (1 << 7),
-  VAR_NODE              = (1 << 2) | (1 << 8),
-  FUNCTION_NODE         = (1 << 2) | (1 << 9),
-  CONSTRUCTOR_NODE      = (1 << 2) | (1 << 10),
+	/*4*/
+	NTYPE_DECLARATION,
+	NASSIGN_DECLARATION,
+	NCONST_DECLARATION,
 
-  STATEMENT_NODE        = (1 << 1),
-  IF_STATEMENT_NODE     = (1 << 1) | (1 << 11),
-  WHILE_STATEMENT_NODE  = (1 << 1) | (1 << 12),
-  ASSIGNMENT_NODE       = (1 << 1) | (1 << 13),
-  NESTED_SCOPE_NODE     = (1 << 1) | (1 << 14),
-
-  DECLARATION_NODE      = (1 << 15)
+	/*7*/
+	NASSIGN_STATEMENT,
+	NIF_STATEMENT,
+	NIF_ELSE_STATEMENT,
+	NSCOPE_STATEMENT,
+	
+	/*11*/
+	NUNARY_EXPR,
+	NBINARY_EXPR,
+	NBRACKETS_EXPR,
+	NFUNC_EXPR,
+	NTYPE_EXPR,
+	NVAR_EXPR,
+	NINT_EXPR,
+	NFLOAT_EXPR,
+	NBOOL_EXPR,
+	
+	/*20*/
+	NID_VARIABLE,
+	NARRAY_VARIABLE,
+	NARGS_ARGUMENTS,
+	NEXPR_ARGUMENTS,
+	NARGUMENTS_OPT
 } node_kind;
 
 
@@ -66,17 +78,6 @@ struct node_ {
        node *declarations ;
        node *statements;
     } scope;
-  
-    struct {
-      int op;
-      node *right;
-    } unary_expr;
-
-    struct {
-      int op;
-      node *left;
-      node *right;
-    } binary_expr;
 
     struct{
 		node* declarations;
@@ -87,6 +88,27 @@ struct node_ {
 		node* statements;
 		node* statement;
 	}statements;
+	
+	struct{
+		node* type;
+		char* id;
+	}type_declaration;
+	
+	struct{
+		int type_kind;
+	}type;
+
+	struct{
+		node* type;
+		char* id;
+		node* expression;
+	}assign_declaration;
+
+	struct{
+		node* type;
+		char* id;
+		node* expression;
+	}const_declaration;
 
 	struct{
 		node* variable;
@@ -102,36 +124,27 @@ struct node_ {
 		node* condition;
 		node* statement;
 		node* else_statement;
-
 	}if_else_statement;
 
 	struct{
 		node* scope;
-
 	}scope_statement;
 
+	struct {
+      int op;
+      node *right;
+    } unary_expr;
+
+    struct {
+      int op;
+      node *left;
+      node *right;
+    } binary_expr;
+	
 	struct{
 		node* expression;
 	}brackets_expr;
 	
-
-	struct{
-		node_type type;
-		char* id;
-	}type_declaration;
-
-	struct{
-		node_type type;
-		char* id;
-		node* expression;
-	}assign_declaration;
-
-	struct{
-		node_type type;
-		char* id;
-		node* expression;
-	}const_declaration;
-
 	struct{
 		int func;
 		node* arguments_opt;
@@ -144,7 +157,7 @@ struct node_ {
 	
 	struct{
 		node* variable;
-	}var_expression;
+	}var_expr;
 	
 	struct{
 		int number;
@@ -157,12 +170,9 @@ struct node_ {
 	struct{
 		bool boolean;
 	}bool_expr;
-
-	
 	
 	struct{
 		char* id;
-
 	}id_variable;
 	
 	struct{

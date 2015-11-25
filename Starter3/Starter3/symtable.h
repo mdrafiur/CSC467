@@ -16,7 +16,7 @@ typedef enum {
 struct symtable_node_t {
     char *name;
     int dtype;
-    int state;
+    int tClass;
     int scope;
     struct symtable_node_t *next;
 };

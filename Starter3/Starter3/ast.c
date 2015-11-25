@@ -28,124 +28,149 @@ node *ast_allocate(node_kind kind, ...) {
 	case NSCOPE:
 		ast->scope.declarations = va_arg(args, node *);
     	ast->scope.statements = va_arg(args, node *);
+		ast->scope.l = va_arg(args, int);
    		break;
   
 	case NDECLARATIONS:
 		ast->declarations.declarations = va_arg(args, node *);
     	ast->declarations.declaration = va_arg(args, node *);
+		ast->declarations.l = va_arg(args, int);
    		break;
 
 	case NSTATEMENTS:
 		ast->statements.statements = va_arg(args, node *);
     	ast->statements.statement = va_arg(args, node *);
+		ast->statements.l = va_arg(args, int);
    		break;
 
 	/*4*/
 	case NTYPE_DECLARATION:
 		ast->type_declaration.type = va_arg(args, node *);
     	ast->type_declaration.id = va_arg(args, char *);
+		ast->type_declaration.l = va_arg(args, int);
    		break;
 
 	case NASSIGN_DECLARATION:
 		ast->assign_declaration.type = va_arg(args, node *);
 		ast->assign_declaration.id = va_arg(args, char *);
 		ast->assign_declaration.expression = va_arg(args, node *);
+		ast->assign_declaration.l = va_arg(args, int);
 		break;
 
 	case NCONST_DECLARATION:
 		ast->const_declaration.type = va_arg(args, node *);
 		ast->const_declaration.id = va_arg(args, char *);
 		ast->const_declaration.expression = va_arg(args, node *);
+		ast->const_declaration.l = va_arg(args, int);
 		break;
 
 	/*7*/
 	case NASSIGN_STATEMENT:
 		ast->assign_statement.variable = va_arg(args, node *);
 		ast->assign_statement.expression = va_arg(args, node *);
+		ast->assign_statement.l = va_arg(args, int);
 		break;
 	
 	case NIF_STATEMENT:
 		ast->if_statement.condition = va_arg(args, node *);
 		ast->if_statement.statement = va_arg(args, node *);
+		ast->if_statement.l = va_arg(args, int);
 		break;
 
 	case NIF_ELSE_STATEMENT:
 		ast->if_else_statement.condition = va_arg(args, node *);
 		ast->if_else_statement.statement = va_arg(args, node *);
 		ast->if_else_statement.else_statement = va_arg(args, node *);
+		ast->scope.l = va_arg(args, int);
 		break;
 
 	case NSCOPE_STATEMENT:
 		ast->scope_statement.scope = va_arg(args, node *);
+		ast->scope_statement.l = va_arg(args, int);
 		break;
 	
 	/*11*/
 	case NUNARY_EXPR:
 		ast->unary_expr.op = va_arg(args, int);
     	ast->unary_expr.right = va_arg(args, node *);
+		ast->scope.l = va_arg(args, int);
     	break;
 		
 	case NBINARY_EXPR:
 		ast->binary_expr.op = va_arg(args, int);
     	ast->binary_expr.left = va_arg(args, node *);
     	ast->binary_expr.right = va_arg(args, node *);
+		ast->binary_expr.l = va_arg(args, int);
     	break;
 
 	case NBRACKETS_EXPR:
 		ast->brackets_expr.expression = va_arg(args, node *);
+		ast->brackets_expr.l = va_arg(args, int);
 		break;
 
 	case NFUNC_EXPR:
 		ast->func_expr.func = va_arg(args, int);
 		ast->func_expr.arguments_opt = va_arg(args, node *);
+		ast->func_expr.l = va_arg(args, int);
 		break;
 	
 	case NTYPE_EXPR:
 		ast->type_expr.type = va_arg(args, node *);
 		ast->type_expr.arguments_opt = va_arg(args, node *);
+		ast->type_expr.l = va_arg(args, int);
 		break;
 
 	case NVAR_EXPR:
 		ast->var_expr.variable = va_arg(args, node *);
+		ast->var_expr.l = va_arg(args, int);
 		break;
 
 	case NINT_EXPR:
 		ast->int_expr.number = va_arg(args, int);
+		ast->scope.l = va_arg(args, int);
 		break;
 
 	case NFLOAT_EXPR:
 		ast->float_expr.number = va_arg(args, double);
+		ast->float_expr.l = va_arg(args, int);
 		break;
 
 	case NBOOL_EXPR:
 		ast->bool_expr.boolean = va_arg(args, int);
+		ast->bool_expr.l = va_arg(args, int);
 		break;
 	
 	/*20*/
 	case NID_VARIABLE:
 		ast->id_variable.id = va_arg(args, char *);
+		ast->id_variable.l = va_arg(args, int);
 		break;
 
 	case NARRAY_VARIABLE:
 		ast->array_variable.id = va_arg(args, char *);
 		ast->array_variable.index = va_arg(args, int);
+		ast->array_variable.l = va_arg(args, int);
 		break;
 
 	case NARGS_ARGUMENTS:
 		ast->args_arguments.arguments = va_arg(args, node *);
 		ast->args_arguments.expression = va_arg(args, node *);
+		ast->args_arguments.l = va_arg(args, int);
 		break;
 	
 	case NEXPR_ARGUMENTS:
 		ast->expr_arguments.expression = va_arg(args, node *);
+		ast->expr_arguments.l = va_arg(args, int);
 		break;
 
 	case NARGUMENTS_OPT:
 		ast->arguments_opt.arguments = va_arg(args, node *);
+		ast->arguments_opt.l = va_arg(args, int);
 		break;
 	
 	case NTYPE:
 		ast->type.type_kind = va_arg(args, int);
+		ast->type.l = va_arg(args, int);
 		break;
 
   default: break;

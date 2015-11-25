@@ -7,9 +7,25 @@
 #include "ast.h"
 #include "symtable.h"
 
+
 void symbol_table(node *ast) {
 
     assert(ast);
+
+    // insert the pre-defined variables
+    insert_into_symtable("gl_FragColor", VEC4, RESULT, 0);
+    insert_into_symtable("gl_FragDepth", BOOL, RESULT, 0);
+    insert_into_symtable("gl_FragCoord", VEC4, RESULT, 0);
+    insert_into_symtable("gl_TexCoord", VEC4, ATTRIBUTE, 0);
+    insert_into_symtable("gl_Color", VEC4, ATTRIBUTE, 0);
+    insert_into_symtable("gl_Secondary", VEC4, ATTRIBUTE, 0);
+    insert_into_symtable("gl_FogFragCoord", VEC4, ATTRIBUTE, 0);
+    insert_into_symtable("gl_Light_Half", VEC4, UNIFORM, 0);
+    insert_into_symtable("gl_Light_Ambient", VEC4, UNIFORM, 0);
+    insert_into_symtable("gl_Material_Shininess", VEC4, UNIFORM, 0);
+    insert_into_symtable("env1", VEC4, UNIFORM, 0);
+    insert_into_symtable("env2", VEC4, UNIFORM, 0);
+    insert_into_symtable("env3", VEC4, UNIFORM, 0);
 
     switch((int)ast->kind){
         case 0:
@@ -32,7 +48,7 @@ void symbol_table(node *ast) {
 
         case 4:
             symbol_table(ast->type_declaration.type);
-            
+
             insert_into_symtable(ast->type_declaration.id, -ast->type_declaration.type->type.type_kind, scope_num);
             break;
 
@@ -138,10 +154,10 @@ void symbol_table(node *ast) {
             symbol_table(ast->arguments_opt.arguments);
             break;
 
-        case 25;
+            case 25;
             break;
 
-        default
-            break;
+            default
+                break;
 
-                                                   break;
+            break;

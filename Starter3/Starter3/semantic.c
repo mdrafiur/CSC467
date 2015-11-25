@@ -44,7 +44,7 @@ int semantic_check( node *ast) {
 
         case 4:
             if(scope_check(ast->type_declaration.id, ct_scope) == -1) {
-                fprintf(errorFile.txt, "Error: Variable cannot be re-declared within the same scope\n");
+                fprintf(errorFile, "Error: Variable cannot be re-declared within the same scope\n");
                 errorOccurred = 1;    
                 return -1;
             }
@@ -65,13 +65,13 @@ int semantic_check( node *ast) {
                 return -1;
 
             if(scope_check(ast->assign_declaration.id, ct_scope) == -1) {
-                fprintf(errorFile.txt, "Error: Variable cannot be re-declared within the same scope\n");
+                fprintf(errorFile, "Error: Variable cannot be re-declared within the same scope\n");
                 errorOccurred = 1;
                 return -1;                                                            
             }
 
             if(left_expr != right_expr){
-                fprintf(errorFile.txt, "Error: Type mismatch in assignment\n"
+                fprintf(errorFile, "Error: Type mismatch in assignment\n"
                 return -1;
             }
             else
@@ -97,13 +97,13 @@ int semantic_check( node *ast) {
                 return -1;
 
             if(scope_check(ast->const_declaration.id, ct_scope) == -1) {
-                fprintf(errorFile.txt, "Error: Variable cannot be re-declared within the same scope\n");
+                fprintf(errorFile, "Error: Variable cannot be re-declared within the same scope\n");
                 errorOccurred = 1;
                 return -1;                                                            
             }
 
             if(left_expr != right_expr){
-                fprintf(errorFile.txt, "Error: Type mismatch in assignment\n"
+                fprintf(errorFile, "Error: Type mismatch in assignment\n"
                 errorOccurred = 1;
                 return -1;
             }
@@ -141,7 +141,7 @@ int semantic_check( node *ast) {
                 return -1;
 
             else if(left_expr != BOOL) {
-                fprintf(errorFile.txt, "Error: Condition must be of type to bool");
+                fprintf(errorFile, "Error: Condition must be of type to bool");
                 errorOccurred = 1;
                 return -1;
             }                                     
@@ -158,7 +158,7 @@ int semantic_check( node *ast) {
                 return -1;
 
             else if(left_expr != BOOL) {
-                fprintf(errorFile.txt, "Error: Condition must be of type bool\n");
+                fprintf(errorFile, "Error: Condition must be of type bool\n");
                 errorOccurred = 1;                                                        
                 return -1;
             }
@@ -185,7 +185,7 @@ int semantic_check( node *ast) {
             if(ast->unary_expr.op == MINUS) {
                                                     
                 if(right_expr == BOOL || right_expr == BVEC2|| right_expr == BVEC3|| rigddht_expr == BVEC4){
-                    fprintf(errorFile.txt, "Error: All operands to arithmetic operators must have arithmetic types.\n");
+                    fprintf(errorFile, "Error: All operands to arithmetic operators must have arithmetic types.\n");
                     errorOccurred = 1;                                                                                                
                     return -1;
                 }
@@ -195,7 +195,7 @@ int semantic_check( node *ast) {
             else if(ast->unary_expr.op == NOT) {
                 
                 if(right_expr != BOOL || right_expr != BVEC2 || right_expr != BVEC3 || right_expr != BVEC4) {
-                    fprintf(errorFile.txt "Error: All operands to logical operators must have boolean types\n");
+                    fprintf(errorFile "Error: All operands to logical operators must have boolean types\n");
                     errorOccurred = 1;
                     return -1;
                     }

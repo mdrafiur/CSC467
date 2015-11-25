@@ -5,9 +5,18 @@
 
 typedef struct symtable_node_t symtable_node;
 
+typedef enum {
+	CONST,
+	NONCONST,
+	ATTRIBUTE,
+	UNIFORM,
+	RESULT,
+} state;
+
 struct symtable_node_t {
     char *name;
     int dtype;
+    int state;
     int scope;
     struct symtable_node_t *next;
 };

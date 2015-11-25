@@ -91,7 +91,6 @@ int main (int argc, char *argv[]) {
   if (dumpAST)
     ast_print(ast);
     
-  predefined_var_table(void);  
   symbol_table(ast);
 /* Phase 4: Add code to call the code generation routine */
 /* TODO: call your code generation routine here */

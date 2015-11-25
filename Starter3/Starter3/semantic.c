@@ -1,7 +1,7 @@
 #include "semantic.h"
 
 int ct_scope = 0;
-int right_expr, left_expr;
+int r_expr, l_expr;
 int type_class;
 
 int semantic_check( node *ast) {
@@ -13,33 +13,33 @@ int semantic_check( node *ast) {
             break;
 
         case 1:
-            right_expr = semantic_check(ast->scope.declarations);
-            left_expr = semantic_check(ast->scope.statements);
+            r_expr = semantic_check(ast->scope.declarations);
+            l_expr = semantic_check(ast->scope.statements);
 
-            if(right_expr == -1 || left_expr == -1)
+            if(r_expr == -1 || l_expr == -1)
                 return -1;
-
-            return 0;
+            else
+                return 0;
             break;
 
         case 2:
-            left_expr = semantic_check(ast->declarations.declaration);
-            right_expr = semantic_check(ast->declarations.declarations);
+            l_expr = semantic_check(ast->declarations.declaration);
+            r_expr = semantic_check(ast->declarations.declarations);
 
-            if(right_expr == -1 || left_expr == -1)
+            if(r_expr == -1 || l_expr == -1)
                 return -1;
-
-            return left_expr;
+            else
+                return l_expr;
             break;
 
         case 3:
-            left_expr = semantic_check(ast->statements.statement);
-            right_expr = semantic_check(ast->statements.statements);
+            l_expr = semantic_check(ast->statements.statement);
+            r_expr = semantic_check(ast->statements.statements);
 
-            if(right_expr == -1 || left_expr == -1)
+            if(r_expr == -1 || l_expr == -1)
                 return -1;
-
-            return left_expr;
+            else
+                return l_expr;
             break;
 
         case 4:
@@ -54,14 +54,10 @@ int semantic_check( node *ast) {
             break;
             
         case 5:
-            return ast->type.type_kind;
-            break;
+            l_expr = semantic_check(ast->assign_declaration.type);
+            r_expr = semantic_check(ast->assign_declaration.expression);
 
-        case 6:
-            left_expr = semantic_check(ast->assign_declaration.type);
-            right_expr = semantic_check(ast->assign_declaration.expression);
-
-            if(right_expr == -1 || left_expr == -1)
+            if(r_expr == -1 || l_expr == -1)
                 return -1;
 
             if(scope_check(ast->assign_declaration.id, ct_scope) == -1) {
@@ -70,30 +66,30 @@ int semantic_check( node *ast) {
                 return -1;                                                            
             }
 
-            if(left_expr != right_expr){
+            if(l_expr != r_expr){
                 fprintf(errorFile, "Error: Type mismatch in assignment\n"
                 return -1;
             }
             else
-                return left_expr;
+                return l_expr;
                                             }
 
-            if((left_expr == IVEC2 || left_expr == IVEC3 || left_expr == IVEC4) && (right_expr == INT))
+            if((l_expr == IVEC2 || l_expr == IVEC3 || l_expr == IVEC4) && (r_expr == INT))
                 return INT;
                                                                                                             
-            if((left_expr == BVEC2 || left_expr == BVEC3 || left_expr == BVEC4) && (right_expr == BOOL))
+            if((l_expr == BVEC2 || l_expr == BVEC3 || l_expr == BVEC4) && (r_expr == BOOL))
                 return BOOL;
 
-            if((left_expr == VEC2 || left_expr == VEC3 || left_expr == VEC4) && (right_expr == FLOAT))
+            if((l_expr == VEC2 || l_expr == VEC3 || l_expr == VEC4) && (r_expr == FLOAT))
                 return FLOAT;
             
             break;
 
-        case 7: 
-            left_expr = semantic_check(ast->const_declaration.type);
-            right_expr = semantic_check(ast->const_declaration.expression);
+        case 6: 
+            l_expr = semantic_check(ast->const_declaration.type);
+            r_expr = semantic_check(ast->const_declaration.expression);
 
-            if(right_expr == -1 || left_expr == -1)
+            if(r_expr == -1 || l_expr == -1)
                 return -1;
 
             if(scope_check(ast->const_declaration.id, ct_scope) == -1) {
@@ -102,45 +98,40 @@ int semantic_check( node *ast) {
                 return -1;                                                            
             }
 
-            if(left_expr != right_expr){
+            if(l_expr != r_expr){
                 fprintf(errorFile, "Error: Type mismatch in assignment\n"
                 errorOccurred = 1;
                 return -1;
             }
             else
-                return left_expr;
+                return l_expr;
                 
             type_class = get_tClass(ast->const_declaration.value->id_variable.id);
-            if(ast->const_declaration.value->kind == NINT_EXPR || ast->const_declaration.value->kind == NFLOAT_EXPR || ast->const_declaration.value->kind == NBOOL_EXPR || type_class == CONST || type_class == UNIFORM ) {
-                ;
-            else {
+            if(ast->const_declaration.value->kind != NINT_EXPR && ast->const_declaration.value->kind != NFLOAT_EXPR && ast->const_declaration.value->kind != NBOOL_EXPR && type_class != CONST && type_class != UNIFORM ) {
                 fprintf("Error: const qualified variables must be initialized with a literal value or with a uniform variable\n");
                 errorOccurred = 1;
                 return -1;
             }
 
-            if((left_expr == IVEC2 || left_expr == IVEC3 || left_expr == IVEC4) && (right_expr == INT))
+            if((l_expr == IVEC2 || l_expr == IVEC3 || l_expr == IVEC4) && (r_expr == INT))
                 return INT;
-                                                                                                            
-            if((left_expr == BVEC2 || left_expr == BVEC3 || left_expr == BVEC4) && (right_expr == BOOL))
-                return BOOL;
 
-            if((left_expr == VEC2 || left_expr == VEC3 || left_expr == VEC4) && (right_expr == FLOAT))
+            if((l_expr == VEC2 || l_expr == VEC3 || l_expr == VEC4) && (r_expr == FLOAT))
                 return FLOAT;
+                                                                                                            
+            if((l_expr == BVEC2 || l_expr == BVEC3 || l_expr == BVEC4) && (r_expr == BOOL))
+                return BOOL;
             
             break;
         
-        case 8:
+        case 7:
             
             break;
 
-        case 9:
-            left_expr = semantic_check(ast->if_statement.condition);
+        case 8:
+            l_expr = semantic_check(ast->if_statement.condition);
                         
-            if(left_expr == -1)
-                return -1;
-
-            else if(left_expr != BOOL) {
+            if(l_expr != BOOL) {
                 fprintf(errorFile, "Error: Condition must be of type to bool");
                 errorOccurred = 1;
                 return -1;
@@ -151,13 +142,10 @@ int semantic_check( node *ast) {
 
             break;
 
-        case 10:
-            left_expr = semantic_check(ast->if_else_statement.condition);
+        case 9:
+            l_expr = semantic_check(ast->if_else_statement.condition);
 
-            if(left_expr == -1)
-                return -1;
-
-            else if(left_expr != BOOL) {
+            if(l_expr != BOOL) {
                 fprintf(errorFile, "Error: Condition must be of type bool\n");
                 errorOccurred = 1;                                                        
                 return -1;
@@ -169,43 +157,47 @@ int semantic_check( node *ast) {
             }
             break;
 
-        case 11:
+        case 10:
             ct_scope++;
-            right_expr = semantic_check(ast->scope_statement.scope);
+            r_expr = semantic_check(ast->scope_statement.scope);
             ct_scope--;
-            return right_expr;
+            return r_expr;
             break;
 
-        case 12:
-            right_expr = semantic_check(ast->unary_expr.right);
-
-            if(right_expr == -1)
-                return -1;
+        case 11:
+            r_expr = semantic_check(ast->unary_expr.right);
 
             if(ast->unary_expr.op == MINUS) {
                                                     
-                if(right_expr == BOOL || right_expr == BVEC2|| right_expr == BVEC3|| rigddht_expr == BVEC4){
+                if(r_expr == BOOL || r_expr == BVEC2|| r_expr == BVEC3|| rigddht_expr == BVEC4){
                     fprintf(errorFile, "Error: All operands to arithmetic operators must have arithmetic types.\n");
                     errorOccurred = 1;                                                                                                
                     return -1;
                 }
                 else
-                    return right_expr;
+                    return r_expr;
             }
             else if(ast->unary_expr.op == NOT) {
                 
-                if(right_expr != BOOL || right_expr != BVEC2 || right_expr != BVEC3 || right_expr != BVEC4) {
-                    fprintf(errorFile "Error: All operands to logical operators must have boolean types\n");
+                if(r_expr != BOOL || r_expr != BVEC2 || r_expr != BVEC3 || r_expr != BVEC4) {
+                    fprintf(errorFile, "Error: All operands to logical operators must have boolean types\n");
                     errorOccurred = 1;
                     return -1;
                     }
                 else
-                    return right_expr;
-            }                                       
+                    return r_expr;
+            }
+            else
+                return -1;
+
             break;
 
-        case 13:
+        case 12:
 
+            break;
+
+        case 25:
+            return ast->type.type_kind;
             break;
 
             return 0; // failed checks

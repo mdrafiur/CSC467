@@ -1,8 +1,6 @@
 #include "symtable.h"
 
-struct symtable_t *symtable;
-
-struct symtable_t *symtable_init(void)
+symtable *symtable_init(void)
 {
     symtable = malloc(sizeof(struct symtable_t));
     assert(symtable);
@@ -52,7 +50,7 @@ bool lookup_symtable(const char *name)
     return false;
 }
 
-int scope_check(char *name, int scope)
+int scope_check(const char *name, int scope)
 {
     symtable_node *current;
     current = symtable->head;

@@ -12,7 +12,7 @@ void symbol_table(node *ast) {
 
     assert(ast);
 
-    // insert the pre-defined variables
+    // insert pre-defined variables into symtable
     insert_into_symtable("gl_FragColor", VEC4, RESULT, 0);
     insert_into_symtable("gl_FragDepth", BOOL, RESULT, 0);
     insert_into_symtable("gl_FragCoord", VEC4, RESULT, 0);
@@ -49,7 +49,7 @@ void symbol_table(node *ast) {
         case 4:
             symbol_table(ast->type_declaration.type);
 
-            insert_into_symtable(ast->type_declaration.id, -ast->type_declaration.type->type.type_kind, NONCONST, scope_num);
+            insert_into_symtable(ast->type_declaration.id, ast->type_declaration.type->type.type_kind, NONCONST, scope_num);
             break;
 
         case 5:
@@ -104,17 +104,18 @@ void symbol_table(node *ast) {
             break;
 
         case 14:
-            symbol_table(ast->func_expr.func);
             symbol_table(ast->func_expr.arguments_opt);
 
-            if(ast->func_exp.func == 0){
-                insert_into_symtable("dp3", FUNCTION, scope_num);                                
-            }
-            else if(ast->func_exp.func == 1){
-                insert_into_symtable("lit", FUNCTION, scope_num);                                                                
-            }
-            else if (ast->func_exp.func == 2){
-                insert_into_symtable("rsq", FUNCTION, scope_num);
+            switch(ast->func_exp.func) {
+                case 0:
+                    insert_into_symtable("dp3", FUNCTION, NONCONST, scope_num);                                
+                    break;
+                case 1:
+                    insert_into_symtable("lit", FUNCTION, NONCONST, scope_num);                                                                
+                    break;
+                case 2:
+                    insert_into_symtable("rsq", FUNCTION, NONCONST, scope_num);
+                    break;
             }
             break;
 

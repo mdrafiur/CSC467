@@ -24,7 +24,9 @@
 
 /* Phases 3,4: Uncomment following includes as needed */
 #include "ast.h"
-//#include "codegen.h"
+#include "codegen.h"
+#include "symtable.h"
+#include "symbol.h"
 
 /***********************************************************************
  * Default values for various files. Note assumption that default files
@@ -90,7 +92,8 @@ int main (int argc, char *argv[]) {
 /* Phase 3: Call the AST dumping routine if requested */
   if (dumpAST)
     ast_print(ast, 0);
-    
+
+  head = symtable_init(void);
   symbol_table(ast);
 /* Phase 4: Add code to call the code generation routine */
 /* TODO: call your code generation routine here */

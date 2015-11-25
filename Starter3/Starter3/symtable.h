@@ -11,7 +11,7 @@ typedef enum {
 	ATTRIBUTE,
 	UNIFORM,
 	RESULT,
-} state;
+} tClass;
 
 struct symtable_node_t {
     char *name;
@@ -26,7 +26,7 @@ struct symtable_t {
     struct symtable_node_t *head;
 };
 
-void insert_into_symtable(char *sym_name, int type, int scope);
+void insert_into_symtable(char *sym_name, int type, int tClass, int scope);
 bool lookup_symtable(const char *name);
 int get_symtable_type(char *name);
 int remove_from_symtable(char *sym_name);

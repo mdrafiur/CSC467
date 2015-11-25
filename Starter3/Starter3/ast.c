@@ -6,7 +6,7 @@
 #include "ast.h"
 #include "common.h"
 #include "parser.tab.h"
-#include "symtable.h"
+/*#include "symtable.h"*/
 
 #define DEBUG_PRINT_TREE 0
 
@@ -212,14 +212,14 @@ void ast_free(node *ast) {
 	/*4*/
 	case NTYPE_DECLARATION:
 		ast_free(ast->type_declaration.type);
-    	ast_free(ast->type_declaration.id);
+    	free(ast->type_declaration.id);
 		free(ast);
 		ast = NULL;
    		break;
 
 	case NASSIGN_DECLARATION:
 		ast_free(ast->assign_declaration.type);
-		ast_free(ast->assign_declaration.id);
+		free(ast->assign_declaration.id);
 		ast_free(ast->assign_declaration.expression);
 		free(ast);
 		ast = NULL;
@@ -227,7 +227,7 @@ void ast_free(node *ast) {
 
 	case NCONST_DECLARATION:
 		ast_free(ast->const_declaration.type);
-		ast_free(ast->const_declaration.id);
+		free(ast->const_declaration.id);
 		ast_free(ast->const_declaration.expression);
 		free(ast);
 		ast = NULL;
@@ -316,13 +316,13 @@ void ast_free(node *ast) {
 	
 	/*20*/
 	case NID_VARIABLE:
-		ast_free(ast->id_variable.id);
+		free(ast->id_variable.id);
 		free(ast);
 		ast = NULL;
 		break;
 
 	case NARRAY_VARIABLE:
-		ast_free(ast->array_variable.id);
+		free(ast->array_variable.id);
 		free(ast);
 		ast = NULL;
 		break;
@@ -417,7 +417,7 @@ void ast_print(node * ast, int flag) {
 		break;
 	
 	case NIF_STATEMENT:
-		printf("(IF ",0);
+		printf("(IF ");
 		ast_print(ast->if_statement.condition,0);
 		ast_print(ast->if_statement.statement,0);
 		printf(")\n");
@@ -452,16 +452,16 @@ void ast_print(node * ast, int flag) {
     	break;
 
 	case NBRACKETS_EXPR:
-		ast_print(ast->brackets_expr.expression);
+		ast_print(ast->brackets_expr.expression, 0);
 		break;
 
 	case NFUNC_EXPR:
 		printf("(CALL ");
-		if(ast->function_exp.func == 0){
+		if(ast->func_expr.func == 0){
 			printf("dp3 ");
-		}else if(ast->function_exp.func == 1){
+		}else if(ast->func_expr.func == 1){
 			printf("lit ");
-		}else if(ast->function_exp.func == 2){
+		}else if(ast->func_expr.func == 2){
 			printf("rsq ");
 		}
 		ast_print(ast->func_expr.arguments_opt,0);
@@ -480,11 +480,11 @@ void ast_print(node * ast, int flag) {
 		break;
 
 	case NINT_EXPR:
-		printf("<%d>\n", ast->int_expr.number,0);
+		printf("<%d>\n", ast->int_expr.number);
 		break;
 
 	case NFLOAT_EXPR:
-		printf("<%f>\n", ast->float_expr.number,0);
+		printf("<%f>\n", ast->float_expr.number);
 		break;
 
 	case NBOOL_EXPR:
@@ -500,8 +500,8 @@ void ast_print(node * ast, int flag) {
 	case NID_VARIABLE:
 		if(flag == 0)
 		{
-			type = get_symtable_type(ast->array_variable.id);
-			printType(type);
+			/*type = get_symtable_type(ast->array_variable.id);
+			printType(type);*/
 			printf("%s ", ast->id_variable.id);
 		}else{
 			printf("<%s>\n", ast->id_variable.id);
@@ -511,20 +511,20 @@ void ast_print(node * ast, int flag) {
 	case NARRAY_VARIABLE:
 		if(flag == 0)
 		{
-			type = get_symtable_type(ast->array_variable.id);
-			printType(type);
+			/*type = get_symtable_type(ast->array_variable.id);
+			printType(type);*/
 			printf("%s ", ast->id_variable.id);
 
 		}else{
 			printf("(INDEX ");
-			type = get_symtable_type(ast->array_variable.id);
+			/*type = get_symtable_type(ast->array_variable.id);
 			if(type == IVEC2 | type == IVEC3 | type == IVEC4){
 				printf("int "); 
 			}else if(type == VEC2 | type == VEC3 | type == VEC4){
 				printf("float ");
 			}else if(type == BVEC2 | type == BVEC3 | type == BVEC4){
 				printf("bool ");
-			}
+			}*/
 			printf("%s <%d>\n", ast->array_variable.id, ast->array_variable.index);
 		}
 		break;
@@ -543,7 +543,7 @@ void ast_print(node * ast, int flag) {
 		break;
 	
 	case NTYPE:
-		printType(type_kind);
+		printType(ast->type.type_kind);
 		break;
 
 	default:break;
@@ -598,49 +598,49 @@ void printType(int type){
 
 void printOp(int op){
 	switch(op){
-		case	AND:
+		case	AND_OPS:
 			printf("AND && ");
 			break;
-		case OR:
+		case OR_OPS:
 			printf("OR || ");
 			break;
-		case EQ:
+		case EQ_OPS:
 			printf("EQ == ");
 			break;
-		case NEQ:
+		case NEQ_OPS:
 			printf("NEQ != ");
 			break;
-		case GEQ:
+		case GEQ_OPS:
 			printf("GEQ >= ");
 			break;
-		case LEQ:
+		case LEQ_OPS:
 			printf("LEQ <= ");
 			break;
-		case LESS:
+		case LESS_OPS:
 			printf("LESS < ");
 			break;
-		case GTR:
+		case GTR_OPS:
 			printf("GTR > ");
 			break;
-		case PLUS:
+		case PLUS_OPS:
 			printf("PLUS + ");
 			break;
-		case MINUS:
+		case MINUS_OPS:
 			printf("MINUS - ");
 			break;
-		case TIMES:
+		case TIMES_OPS:
 			printf("TIMES * ");
 			break;
-		case DIVIDE:
+		case DIVIDE_OPS:
 			printf("DIVIDE / ");
 			break;
-		case POW:
+		case POW_OPS:
 			printf("POW ^ ");
 			break;
-		case NEG:
+		case NEG_OPS:
 			printf("NEG - ");
 			break;
-		case NOT:
+		case NOT_OPS:
 			printf("NOT ! ");
 			break;
 	}

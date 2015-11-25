@@ -67,7 +67,8 @@ int semantic_check( node *ast) {
             }
 
             if(l_expr != r_expr){
-                fprintf(errorFile, "Error: Type mismatch in assignment\n"
+                fprintf(errorFile, "Error: Type mismatch in assignment\n");
+                errorOccurred = 1;
                 return -1;
             }
             else

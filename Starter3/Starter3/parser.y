@@ -73,7 +73,6 @@ enum {
 %token          BOOL_T
 %token          CONST
 %token          FALSE_C TRUE_C
-%token          FUNC
 %token          IF ELSE
 %token          AND OR NEQ EQ LEQ GEQ
 
@@ -84,6 +83,7 @@ enum {
 %token <as_float> FLOAT_C
 %token <as_int>   INT_C
 %token <as_str>   ID
+%token <as_func>  FUNC
 
 // operator precdence
 %left     OR                        // 7
@@ -101,7 +101,17 @@ enum {
 
 // type declarations
 // TODO: fill this out
+%type <as_ast> scope
+%type <as_ast> declarations
+%type <as_ast> statements
+%type <as_ast> declaration
+
+%type <as_ast> statement
+%type <as_ast> type
 %type <as_ast> expression
+%type <as_ast> variable
+%type <as_ast> arguments
+%type <as_ast> arguments_opt
 
 // expect one shift/reduce conflict, where Bison chooses to shift
 // the ELSE.
@@ -125,138 +135,186 @@ program
 
 scope
   : '{' declarations statements '}'
-      { yTRACE("scope -> { declarations statements }\n") }
+      { $$ = ast_allocate(NSCOPE, $2, $3, yyline);
+		yTRACE("scope -> { declarations statements }\n") }
   ;
 
 declarations
   : declarations declaration
-      { yTRACE("declarations -> declarations declaration\n") }
+      { $$ = ast_allocate(NDECLARATIONS, $1, $2, yyline);
+		yTRACE("declarations -> declarations declaration\n") }
   | 
-      { yTRACE("declarations -> \n") }
+      { $$ = NULL;
+		yTRACE("declarations -> \n") }
   ;
 
 statements
   : statements statement
-      { yTRACE("statements -> statements statement\n") }
+      { $$ = ast_allocate(NSTATEMENTS, $1, $2, yyline);
+		yTRACE("statements -> statements statement\n") }
   | 
-      { yTRACE("statements -> \n") }
+      { $$ = NULL;
+		yTRACE("statements -> \n") }
   ;
 
 declaration
   : type ID ';' 
-      { yTRACE("declaration -> type ID ;\n") }
+      {  $$ = ast_allocate(NTYPE_DECLARATION, $1, $2, yyline);
+		yTRACE("declaration -> type ID ;\n") }
   | type ID '=' expression ';'
-      { yTRACE("declaration -> type ID = expression ;\n") }
+      { $$ =  ast_allocate(NASSIGN_DECLARATION, $1, $2, $4, yyline);
+		yTRACE("declaration -> type ID = expression ;\n") }
   | CONST type ID '=' expression ';'
-      { yTRACE("declaration -> CONST type ID = expression ;\n") }
+      { $$ = ast_allocate(NCONST_DECLARATION, $2, $3, $5, yyline);
+		yTRACE("declaration -> CONST type ID = expression ;\n") }
   ;
 
 statement
   : variable '=' expression ';'
-      { yTRACE("statement -> variable = expression ;\n") }
+      { $$ = ast_allocate(NASSIGN_STATEMENT, $1, $3, yyline);
+		yTRACE("statement -> variable = expression ;\n") }
   | IF '(' expression ')' statement ELSE statement %prec WITH_ELSE
-      { yTRACE("statement -> IF ( expression ) statement ELSE statement \n") }
+      { $$ = ast_allocate(NIF_ELSE_STATEMENT, $3, $5, $7, yyline);
+		yTRACE("statement -> IF ( expression ) statement ELSE statement \n") }
   | IF '(' expression ')' statement %prec WITHOUT_ELSE
-      { yTRACE("statement -> IF ( expression ) statement \n") }
+      { $$ = ast_allocate(NIF_STATEMENT, $3, $5, yyline); 
+		yTRACE("statement -> IF ( expression ) statement \n") }
   | scope 
-      { yTRACE("statement -> scope \n") }
+      { $$ = ast_allocate(NSCOPE_STATEMENT, $1, yyline); 
+		yTRACE("statement -> scope \n") }
   | ';'
-      { yTRACE("statement -> ; \n") }
+      { $$ = NULL;
+		yTRACE("statement -> ; \n") }
   ;
 
 type
   : INT_T
-      { yTRACE("type -> INT_T \n") }
+      { $$ = ast_allocate(NTYPE, INT, yyline);
+		yTRACE("type -> INT_T \n") }
   | IVEC_T
-      { yTRACE("type -> IVEC_T \n") }
+      {  $$ = ast_allocate(NTYPE, $1-1+IVEC2, yyline); 
+		yTRACE("type -> IVEC_T \n") }
   | BOOL_T
-      { yTRACE("type -> BOOL_T \n") }
+      { $$ = ast_allocate(NTYPE, BOOL, yyline); 
+		yTRACE("type -> BOOL_T \n") }
   | BVEC_T
-      { yTRACE("type -> BVEC_T \n") }
+      { $$ = ast_allocate(NTYPE, $1 -1 + BVEC2, yyline); 
+		yTRACE("type -> BVEC_T \n") }
   | FLOAT_T
-      { yTRACE("type -> FLOAT_T \n") }
+      { $$ = ast_allocate(NTYPE, FLOAT, yyline); 
+		yTRACE("type -> FLOAT_T \n") }
   | VEC_T
-      { yTRACE("type -> VEC_T \n") }
+      { $$ = ast_allocate(NTYPE,$1 -1 + VEC2, yyline); 
+		yTRACE("type -> VEC_T \n") }
   ;
 
 expression
 
   /* function-like operators */
   : type '(' arguments_opt ')' %prec '('
-      { yTRACE("expression -> type ( arguments_opt ) \n") }
+      { $$ = ast_allocate(NTYPE_EXPR, $1, $3, yyline);
+		yTRACE("expression -> type ( arguments_opt ) \n") }
   | FUNC '(' arguments_opt ')' %prec '('
-      { yTRACE("expression -> FUNC ( arguments_opt ) \n") }
+      { $$ = ast_allocate(NFUNC_EXPR, $1, $3, yyline);
+		yTRACE("expression -> FUNC ( arguments_opt ) \n") }
 
   /* unary opterators */
   | '-' expression %prec UMINUS
-      { yTRACE("expression -> - expression \n") }
+      { $$ = ast_allocate(NUNARY_EXPR, NEG_OPS, $2, yyline);
+		yTRACE("expression -> - expression \n") }
   | '!' expression %prec '!'
-      { yTRACE("expression -> ! expression \n") }
+      { $$ = ast_allocate(NUNARY_EXPR, NOT_OPS, $2, yyline);
+		yTRACE("expression -> ! expression \n") }
 
   /* binary operators */
   | expression AND expression %prec AND
-      { yTRACE("expression -> expression AND expression \n") }
+      { $$ = ast_allocate(NBINARY_EXPR, AND_OPS, $1, $3, yyline);
+		yTRACE("expression -> expression AND expression \n") }
   | expression OR expression %prec OR
-      { yTRACE("expression -> expression OR expression \n") }
+      { $$ = ast_allocate(NBINARY_EXPR, OR_OPS, $1, $3, yyline);
+		yTRACE("expression -> expression OR expression \n") }
   | expression EQ expression %prec EQ
-      { yTRACE("expression -> expression EQ expression \n") }
+      { $$ = ast_allocate(NBINARY_EXPR, EQ_OPS, $1, $3 ,yyline);
+		yTRACE("expression -> expression EQ expression \n") }
   | expression NEQ expression %prec NEQ
-      { yTRACE("expression -> expression NEQ expression \n") }
+      { $$ = ast_allocate(NBINARY_EXPR, NEQ_OPS, $1, $3 ,yyline);
+		yTRACE("expression -> expression NEQ expression \n") }
   | expression '<' expression %prec '<'
-      { yTRACE("expression -> expression < expression \n") }
+      { $$ = ast_allocate(NBINARY_EXPR, LESS_OPS, $1, $3 ,yyline);
+		yTRACE("expression -> expression < expression \n") }
   | expression LEQ expression %prec LEQ
-      { yTRACE("expression -> expression LEQ expression \n") }
+      { $$ = ast_allocate(NBINARY_EXPR, LEQ_OPS, $1, $3 ,yyline);
+		yTRACE("expression -> expression LEQ expression \n") }
   | expression '>' expression %prec '>'
-      { yTRACE("expression -> expression > expression \n") }
+      { $$ = ast_allocate(NBINARY_EXPR, GTR_OPS, $1, $3 ,yyline);
+		yTRACE("expression -> expression > expression \n") }
   | expression GEQ expression %prec GEQ
-      { yTRACE("expression -> expression GEQ expression \n") }
+      { $$ = ast_allocate(NBINARY_EXPR, GEQ_OPS, $1, $3 ,yyline);
+		yTRACE("expression -> expression GEQ expression \n") }
   | expression '+' expression %prec '+'
-      { yTRACE("expression -> expression + expression \n") }
+      { $$ = ast_allocate(NBINARY_EXPR, PLUS_OPS, $1, $3, yyline);
+		yTRACE("expression -> expression + expression \n") }
   | expression '-' expression %prec '-'
-      { yTRACE("expression -> expression - expression \n") }
+      { $$ = ast_allocate(NBINARY_EXPR, MINUS_OPS, $1, $3, yyline);
+		yTRACE("expression -> expression - expression \n") }
   | expression '*' expression %prec '*'
-      { yTRACE("expression -> expression * expression \n") }
+      { $$ = ast_allocate(NBINARY_EXPR, TIMES_OPS, $1, $3 ,yyline);
+		yTRACE("expression -> expression * expression \n") }
   | expression '/' expression %prec '/'
-      { yTRACE("expression -> expression / expression \n") }
+      { $$ = ast_allocate(NBINARY_EXPR, DIVIDE_OPS, $1, $3, yyline);
+		yTRACE("expression -> expression / expression \n") }
   | expression '^' expression %prec '^'
-      { yTRACE("expression -> expression ^ expression \n") }
+      { $$ = ast_allocate(NBINARY_EXPR, POW_OPS, $1, $3 ,yyline);
+		yTRACE("expression -> expression ^ expression \n") }
 
   /* literals */
   | TRUE_C
-      { yTRACE("expression -> TRUE_C \n") }
+      { $$ = ast_allocate(NBOOL_EXPR, 0, yyline);
+		yTRACE("expression -> TRUE_C \n") }
   | FALSE_C
-      { yTRACE("expression -> FALSE_C \n") }
+      { $$ = ast_allocate(NBOOL_EXPR, 1, yyline);
+		yTRACE("expression -> FALSE_C \n") }
   | INT_C
-      { yTRACE("expression -> INT_C \n") }
+      { $$ = ast_allocate(NINT_EXPR, $1, yyline);
+		yTRACE("expression -> INT_C \n") }
   | FLOAT_C
-      { yTRACE("expression -> FLOAT_C \n") }
+      { $$ = ast_allocate(NFLOAT_EXPR, $1, yyline);
+		yTRACE("expression -> FLOAT_C \n") }
 
   /* misc */
   | '(' expression ')'
-      { yTRACE("expression -> ( expression ) \n") }
+      { $$ = ast_allocate(NBRACKETS_EXPR, $2, yyline);
+		yTRACE("expression -> ( expression ) \n") }
   | variable { }
-    { yTRACE("expression -> variable \n") }
+    { $$ = ast_allocate(NVAR_EXPR, $1, yyline);
+		yTRACE("expression -> variable \n") }
   ;
 
 variable
   : ID
-      { yTRACE("variable -> ID \n") }
+      { $$ = ast_allocate(NID_VARIABLE, $1, yyline);
+	yTRACE("variable -> ID \n") }
   | ID '[' INT_C ']' %prec '['
-      { yTRACE("variable -> ID [ INT_C ] \n") }
+      { $$ = ast_allocate(NARRAY_VARIABLE, $1, $3, yyline);
+		yTRACE("variable -> ID [ INT_C ] \n") }
   ;
 
 arguments
   : arguments ',' expression
-      { yTRACE("arguments -> arguments , expression \n") }
+      { $$ = ast_allocate(NARGS_ARGUMENTS, $1, $3, yyline);
+		yTRACE("arguments -> arguments , expression \n") }
   | expression
-      { yTRACE("arguments -> expression \n") }
+      { $$ = ast_allocate(NEXPR_ARGUMENTS, $1, yyline);
+		yTRACE("arguments -> expression \n") }
   ;
 
 arguments_opt
   : arguments
-      { yTRACE("arguments_opt -> arguments \n") }
+      { $$ = ast_allocate(NARGUMENTS_OPT, $1, yyline);
+		yTRACE("arguments_opt -> arguments \n") }
   |
-      { yTRACE("arguments_opt -> \n") }
+      { $$ = NULL;
+		yTRACE("arguments_opt -> \n") }
   ;
 
 %%
@@ -286,4 +344,3 @@ void yyerror(char* s) {
     fprintf(errorFile, ": Reading token %s\n", yytname[YYTRANSLATE(yychar)]);
   }
 }
-

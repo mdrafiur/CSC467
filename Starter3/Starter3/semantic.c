@@ -1,14 +1,14 @@
 #include "semantic.h"
 
 int ct_scope = 0;
-int r_expr, l_expr;
-int type_class;
+int l_expr, r_expr;
+int type;
 
 int semantic_check( node *ast) {
 
     assert(ast);
 
-    switch((int)ast->kind){
+    switch((int)ast->kind) {
         case 0:
             break;
 
@@ -196,9 +196,197 @@ int semantic_check( node *ast) {
 
             break;
 
+        case 13:
+            return semantic_check(ast->brackets_expr.expression);
+            break;
+
+        case 14:
+            type = semantic_check(ast->func_expr.arguments_opt);
+
+            switch(ast->func_expr.func) {
+        
+                case 0:
+                    if(type == IVEC3 || type == IVEC4)
+                        return INT;
+                    else if(type == VEC3 || type == VEC4)
+                        return FLOAT;
+                    else
+                        return -1;
+                    break;
+
+                case 1:
+                    if(type == VEC4)
+                        return VEC4;
+                    else
+                        return -1;
+                    break;
+
+                case 2:
+                    if(type == FLOAT || type == INT)
+                        return FLOAT;
+                    else
+                        return -1;
+                    break;
+                
+                default:
+                    fprintf(errorFile, "Error: Fuction argument doesn't match as expected.\n")
+                    errorOccurred = 1;
+                    return -1;
+            }
+            break;
+
+        case 15:
+            l_expr = semantic_check(ast->type_expr.type);
+            r_expr = semantic_check(ast->type_expr.arguments_opt);
+
+            if(l_expr == -1 || r_expr == -1)
+                return -1;
+
+            if((l_expr == IVEC2 || l_expr == IVEC3 || l_expr == IVEC4) && (r_expr == INT))
+                return INT;
+
+            if((l_expr == VEC2 || l_expr == VEC3 || l_expr == VEC4) && (r_expr == FLOAT))
+                return FLOAT;
+
+            if((l_expr == BVEC2 || l_expr == BVEC3 || l_expr == BVEC4) && (r_expr == BOOL))
+                return BOOL;
+
+            if(l_expr == r_expr)
+                return l_expr
+            else {
+                fprintf(ErrorFile, "Error: Type mismatch found\n");
+                errorOccurred = 1;
+                return -1;
+            }
+            break;
+
+        case 16:
+
+            break;
+            
+        case 17:
+            return INT;
+            break;
+
+        case 18:
+            return FLOAT;
+            break;
+
+        case 19:
+            return BOOL;
+            break;
+
+        case 20:
+            break;
+
+        case 21:
+            int index = ast->array_variable.index;
+            type = get_data_type(ast->array_variable.id);
+
+            switch(type) {
+                    
+                case IVEC2:
+                    if(index >= 2) {
+                        fprintf(errorFile, "Error: Index limit exceeded.\n");
+                        errorOccurred = 1;                        
+                        return -1;
+                    }                                                                                                                                                              
+                    break;
+                case IVEC3:
+                    if(index >= 3) {
+                        fprintf(errorFile, "Error: Index limit exceeded.\n");
+                        errorOccurred = 1;
+                        return -1;
+                    }
+                    break;
+                case IVEC4:
+                    if(index >= 4) {
+                        fprintf(errorFile, "Error: Index limit exceeded.\n");
+                        errorOccurred = 1;
+                        return -1;
+                    }
+                    break;
+                case VEC2:
+                    if(index >= 2) {
+                        fprintf(errorFile, "Error: Index limit exceeded.\n");
+                        errorOccurred = 1;
+                        return -1;
+                    }
+                    break;
+                case VEC3:
+                    if(index >= 3) {
+                        fprintf(errorFile, "Error: Index limit exceeded.\n");
+                        errorOccurred = 1;
+                        return -1;
+                    }
+                    break;
+                case VEC4:
+                    if(index >= 4) {
+                        fprintf(errorFile, "Error: Index limit exceeded.\n");
+                        errorOccurred = 1;
+                        return -1;
+                    }
+                case BVEC2:
+                    break;
+                    if(index >= 2) {
+                        fprintf(errorFile, "Error: Index limit exceeded.\n");
+                        errorOccurred = 1;
+                        return -1;
+                    }
+                    break;
+                case BVEC3:
+                    if(index >= 3) {
+                        fprintf(errorFile, "Error: Index limit exceeded.\n");
+                        errorOccurred = 1;
+                        return -1;
+                    }
+                    break;
+                case BVEC4:
+                    if(index >= 4) {
+                        fprintf(errorFile, "Error: Index limit exceeded.\n");
+                        errorOccurred = 1;
+                        return -1;
+                    }
+                    break;
+                default:
+                    fprintf(errorFile, "Error: VEC type not found.\n");
+                    errorOccurred = 1;
+                    return -1;
+            }
+            break;
+
+        case 22:
+            r_expr = semantic_check(ast->args_arguments.arguments);
+            l_expr = semantic_check(ast->args_arguments.expression);
+                        
+            if(l_expr == -1 || r_expr == -1)
+                return -1;
+
+            else if(l_expr == r_expr)
+                return r_expr;
+                                                                                
+            else {
+                fprintf(errorFile, "Error: Mismatch in arguments\n");
+                errorOccurred = 1;
+                return -1;
+            }
+            break;
+
+        case 23:
+            return semantic_check(ast->expr_arguments.expression);
+            break;
+
+        case 24:
+            return semantic_check(ast->arguments_opt.arguments);
+            break;
+
         case 25:
             return ast->type.type_kind;
             break;
 
-            return 0; // failed checks
+        default:
+            return -1;
+            break;
     }
+    return 0; // failed checks
+}

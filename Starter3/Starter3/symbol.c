@@ -116,6 +116,8 @@ void symbol_table(node *ast) {
                 case 2:
                     insert_into_symtable("rsq", FUNCTION, NONCONST, scope_num);
                     break;
+                default
+                    break;
             }
             break;
 

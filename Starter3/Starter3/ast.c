@@ -361,7 +361,7 @@ void ast_print(node * ast, int flag) {
 		return;
 	
 	int kind = ast->kind;
-	int type;
+	//int type;
 	//a flag for variable printing
 	//0: accessed in statement
 	//1: accessed in expr

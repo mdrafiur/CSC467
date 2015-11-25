@@ -24,9 +24,10 @@
 
 /* Phases 3,4: Uncomment following includes as needed */
 #include "ast.h"
-#include "codegen.h"
+//#include "codegen.h"
 #include "symtable.h"
 #include "symbol.h"
+#include "semantic.h"
 
 /***********************************************************************
  * Default values for various files. Note assumption that default files
@@ -93,8 +94,12 @@ int main (int argc, char *argv[]) {
   if (dumpAST)
     ast_print(ast, 0);
 
-  head = symtable_init(void);
+  head = symtable_init();
   symbol_table(ast);
+
+  if(semantic_check(ast) == -1)
+    fprintf(stderr, "SYMANTIC CHECK FAILED\n");
+
 /* Phase 4: Add code to call the code generation routine */
 /* TODO: call your code generation routine here */
   if (errorOccurred)

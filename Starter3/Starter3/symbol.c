@@ -49,21 +49,21 @@ void symbol_table(node *ast) {
         case 4:
             symbol_table(ast->type_declaration.type);
 
-            insert_into_symtable(ast->type_declaration.id, -ast->type_declaration.type->type.type_kind, scope_num);
+            insert_into_symtable(ast->type_declaration.id, -ast->type_declaration.type->type.type_kind, NONCONST, scope_num);
             break;
 
         case 5:
             symbol_table(ast->assign_declaration.type);
             symbol_table(ast->assign_declaration.expression);
 
-            insert_into_symtable(ast->assign_declaration.id, ast->assign_declaration.type->type.type_kind, scope_num);
+            insert_into_symtable(ast->assign_declaration.id, ast->assign_declaration.type->type.type_kind, NONCONST, scope_num);
             break;
 
         case 6:
             symbol_table(ast->const_declaration.type);
             symbol_table(ast->const_declaration.expression);
 
-            insert_into_symtable(ast->const_declaration.id, ast->const_declaration.type->type.type_kind, scope_num); 
+            insert_into_symtable(ast->const_declaration.id, ast->const_declaration.type->type.type_kind, CONST, scope_num); 
             break;
 
         case 7:

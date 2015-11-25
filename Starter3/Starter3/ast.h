@@ -19,7 +19,7 @@ typedef struct node_ node;
 extern node *ast;
 
 typedef enum {
-	UNKNOWN  
+	UNKNOWN, 
 	NSCOPE,   
 	NDECLARATIONS,
 	NSTATEMENTS,
@@ -73,21 +73,21 @@ typedef enum{
 }node_type;
 
 typedef enum{
-	AND,
-	OR,
-	EQ,
-	NEQ,
-	GEQ,
-	LEQ,
-	LESS,
-	GTR,
-	PLUS,
-	MINUS,
-	TIMES,
-	DIVIDE,
-	POW,
-	NEG,
-	NOT
+	AND_OPS,
+	OR_OPS,
+	EQ_OPS,
+	NEQ_OPS,
+	GEQ_OPS,
+	LEQ_OPS,
+	LESS_OPS,
+	GTR_OPS,
+	PLUS_OPS,
+	MINUS_OPS,
+	TIMES_OPS,
+	DIVIDE_OPS,
+	POW_OPS,
+	NEG_OPS,
+	NOT_OPS
 }ops;
 
 
@@ -100,127 +100,148 @@ struct node_ {
     struct {
        node *declarations ;
        node *statements;
+		int l;
     } scope;
 
     struct{
 		node* declarations;
 		node* declaration;
+		int l;
 	}declarations;
 
 	struct {
 		node* statements;
 		node* statement;
+		int l;
 	}statements;
 	
 	struct{
 		node* type;
 		char* id;
+		int l;
 	}type_declaration;
 	
 	struct{
 		int type_kind;
+		int l;
 	}type;
 
 	struct{
 		node* type;
 		char* id;
 		node* expression;
+		int l;
 	}assign_declaration;
 
 	struct{
 		node* type;
 		char* id;
 		node* expression;
+		int l;
 	}const_declaration;
 
 	struct{
 		node* variable;
 		node* expression;
+		int l;
 	}assign_statement;
 
 	struct{
 		node* codition;
 		node* statement;
+		int l;
 	}if_statement;
 
 	struct{
 		node* condition;
 		node* statement;
 		node* else_statement;
+		int l;
 	}if_else_statement;
 
 	struct{
 		node* scope;
+		int l;
 	}scope_statement;
 
 	struct {
       int op;
       node *right;
+	 int l;
     } unary_expr;
 
     struct {
       int op;
       node *left;
       node *right;
+		int l;
     } binary_expr;
 	
 	struct{
 		node* expression;
+		int l;
 	}brackets_expr;
 	
 	struct{
 		int func;
 		node* arguments_opt;
+		int l;
 	}func_expr;
 	
 	struct{
 		node* type;
 		node* arguments_opt;
+		int l;
 	}type_expr;
 	
 	struct{
 		node* variable;
+		int l;
 	}var_expr;
 	
 	struct{
 		int number;
+		int l;
 	}int_expr;
 
 	struct{
 		double number;
+		int l;
 	}float_expr;
 
 	struct{
 		/*0 for true, 1 for false*/
 		int boolean;
+		int l;
 	}bool_expr;
 	
 	struct{
 		char* id;
+		int l;
 	}id_variable;
 	
 	struct{
 		char* id;
 		int index;
+		int l;
 	}array_variable;
 
 
 	struct{
 		node* arguments;
 		node* expression;
+		int l;
 	}args_arguments;
 
 	struct{
 		node* expression;
+		int l;
 	}expr_arguments;
 
 	struct{
 		node* arguments;
+		int l;
 	}arguments_opt;
-	
-	struct{
-		int type_kind;
-	}type;
 
 
 

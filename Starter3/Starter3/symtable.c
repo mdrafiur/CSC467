@@ -52,15 +52,14 @@ bool lookup_symtable(const char *name)
     return false;
 }
 
-int get_symtable_type(char *name)
+int scope_check(char *name, int scope)
 {
-    assert(name);
     symtable_node *current;
     current = symtable->head;
     assert(name);
 
     while(current) {
-        if(strcmp(current->sym_name, name) == 0)
+        if(strcmp(current->sym_name, name) == 0 && current->scope == scope)
             return current->dtype;
 
         current = current->next;

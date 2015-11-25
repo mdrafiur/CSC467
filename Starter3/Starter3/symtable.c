@@ -68,6 +68,23 @@ int scope_check(char *name, int scope)
     return -1;
 }
 
+int get_tClass (char *name)
+{
+    symtable_node *current;
+    current = symtable->head;
+    
+    assert(name);
+               
+    while(current) {
+        if(strcmp(current->sym_name, name) == 0)
+            return current->tClass;
+         
+        current = current->next;
+    }
+
+    return -1;
+}
+
 int remove_from_symtable(char *sym_name)
 {
     assert(name);

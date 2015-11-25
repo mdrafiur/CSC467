@@ -89,7 +89,7 @@ int main (int argc, char *argv[]) {
 
 /* Phase 3: Call the AST dumping routine if requested */
   if (dumpAST)
-    ast_print(ast);
+    ast_print(ast, 0);
     
   symbol_table(ast);
 /* Phase 4: Add code to call the code generation routine */

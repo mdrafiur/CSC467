@@ -127,6 +127,7 @@ void symbol_table(node *ast) {
             break;
 
         case 16:
+            symbol_table(ast->var_expr.variable);
             break;
 
         case 17:

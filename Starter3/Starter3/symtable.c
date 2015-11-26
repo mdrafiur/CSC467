@@ -1,45 +1,44 @@
-#include <assert.h>
 #include "symtable.h"
+
 
 symtable *symtable_init(void)
 {
-    symtable *head = (symtable *)malloc(sizeof(symtable));
-    assert(head);
+    symtable *s = (symtable *)malloc(sizeof(symtable));
+    assert(s);
 
-    head->num_item = 0;
-    head->head = NULL;
+    s->num_item = 0;
+    s->head = NULL;
               
-    return head;
+    return s;
 }
 
-void insert_into_symtable(char *sym_name, int type, int tClass, int scope) {
-            
+void insert_into_symtable(symtable *sym_table, char *sym_name, int type, int tClass, int scope) 
+{            
     symtable_node *new_node;
                 
-    if(lookup_symtable(sym_name))
+    if(lookup_symtable(sym_table, sym_name))
         return;
 
     new_node = (symtable_node *)malloc(sizeof(symtable_node));
     assert(new_node);
                                                         
-    new_node->name = malloc(strlen(sym_name) + 1);
+    new_node->name = (char *)malloc(strlen(sym_name) + 1);
     assert(new_node->name);
     strcpy(new_node->name, sym_name);
     new_node->dtype = type;
     new_node->tClass = tClass;
     new_node->scope = scope;
 
-    new_node->next = head->head;
-    head->head = new_node;
-    head->num_item++;
+    new_node->next = sym_table->head;
+    sym_table->head = new_node;
+    sym_table->num_item++;
     return;
-    
 }
 
-bool lookup_symtable(char *name)
+bool lookup_symtable(symtable *sym_table, char *name)
 {
     symtable_node *current;
-    current = head->head;
+    current = sym_table->head;
     assert(name);
 
     while(current) {
@@ -52,10 +51,10 @@ bool lookup_symtable(char *name)
     return false;
 }
 
-int scope_check(char *name, int scope)
+int scope_check(symtable *sym_table, char *name, int scope)
 {
     symtable_node *current;
-    current = head->head;
+    current = sym_table->head;
     assert(name);
 
     while(current) {
@@ -68,10 +67,10 @@ int scope_check(char *name, int scope)
     return -1;
 }
 
-int get_data_type (char *name)
+int get_data_type (symtable *sym_table, char *name)
 {
     symtable_node *current;
-    current = head->head;
+    current = sym_table->head;
     
     assert(name);
                
@@ -85,10 +84,10 @@ int get_data_type (char *name)
     return -1;
 }
 
-int get_tClass (char *name)
+int get_tClass (symtable *sym_table, char *name)
 {
     symtable_node *current;
-    current = head->head;
+    current = sym_table->head;
     
     assert(name);
                
@@ -102,24 +101,24 @@ int get_tClass (char *name)
     return -1;
 }
 
-int remove_from_symtable(char *sym_name)
+int remove_from_symtable(symtable *sym_table, char *sym_name)
 {
     assert(sym_name);
     symtable_node *current;
     symtable_node *prev;
 
-    for (current = head->head, prev = NULL; current; prev = current, current = current->next)
+    for (current = sym_table->head, prev = NULL; current; prev = current, current = current->next)
     {
         if (strcmp(current->name, sym_name) == 0) {
 
             if (!prev)
-                head->head = head->head->next;
+                sym_table->head = sym_table->head->next;
             else
                 prev->next = current->next;
                                                                       
             free(current->name);
             free(current);
-            head->num_item--;
+            sym_table->num_item--;
             return 0;
         }
     }

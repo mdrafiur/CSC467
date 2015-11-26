@@ -24,6 +24,9 @@
 /* Phases 3,4: Uncomment following includes as needed */
 //#include "codegen.h"
 #include "common.h"
+#include "ast.h"
+#include "symbol.h"
+#include "semantic.h"
 
 /***********************************************************************
  * Default values for various files. Note assumption that default files

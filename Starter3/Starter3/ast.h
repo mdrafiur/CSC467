@@ -3,6 +3,7 @@
 #define AST_H_ 1
 
 #include <stdarg.h>
+#include "symtable.h"
 
 // Dummy node just so everything compiles, create your own node/nodes
 //
@@ -124,7 +125,7 @@ struct node_ {
 	
 	struct{
 		node* type;
-		char *id;
+		char* id;
 		int l;
 	}type_declaration;
 	
@@ -135,14 +136,14 @@ struct node_ {
 
 	struct{
 		node* type;
-		char *id;
+		char* id;
 		node* expression;
 		int l;
 	}assign_declaration;
 
 	struct{
 		node* type;
-		char *id;
+		char* id;
 		node* expression;
 		int l;
 	}const_declaration;
@@ -175,6 +176,7 @@ struct node_ {
       int op;
       node *right;
 	 int l;
+	int type;
     } unary_expr;
 
     struct {
@@ -182,6 +184,7 @@ struct node_ {
       node *left;
       node *right;
 		int l;
+	  int type;
     } binary_expr;
 	
 	struct{

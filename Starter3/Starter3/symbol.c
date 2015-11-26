@@ -5,29 +5,28 @@
 
 #include "symbol.h"
 #include "ast.h"
-#include "symtable.h"
 
+symtable *sym_table = symtable_init();
 int scope_num = 0;
 
 void symbol_table(node *ast) {
 
     assert(ast);
-    head = symtable_init();
 
     // insert pre-defined variables into symtable
-    insert_into_symtable("gl_FragColor", VEC4, RESULT, scope_num);
-    insert_into_symtable("gl_FragDepth", BOOL, RESULT, scope_num);
-    insert_into_symtable("gl_FragCoord", VEC4, RESULT, scope_num);
-    insert_into_symtable("gl_TexCoord", VEC4, ATTRIBUTE, scope_num);
-    insert_into_symtable("gl_Color", VEC4, ATTRIBUTE, scope_num);
-    insert_into_symtable("gl_Secondary", VEC4, ATTRIBUTE, scope_num);
-    insert_into_symtable("gl_FogFragCoord", VEC4, ATTRIBUTE, scope_num);
-    insert_into_symtable("gl_Light_Half", VEC4, UNIFORM, scope_num);
-    insert_into_symtable("gl_Light_Ambient", VEC4, UNIFORM, scope_num);
-    insert_into_symtable("gl_Material_Shininess", VEC4, UNIFORM, scope_num);
-    insert_into_symtable("env1", VEC4, UNIFORM, scope_num);
-    insert_into_symtable("env2", VEC4, UNIFORM, scope_num);
-    insert_into_symtable("env3", VEC4, UNIFORM, scope_num);
+    insert_into_symtable(sym_table, "gl_FragColor", VEC4, RESULT, scope_num);
+    insert_into_symtable(sym_table, "gl_FragDepth", BOOL, RESULT, scope_num);
+    insert_into_symtable(sym_table, "gl_FragCoord", VEC4, RESULT, scope_num);
+    insert_into_symtable(sym_table, "gl_TexCoord", VEC4, ATTRIBUTE, scope_num);
+    insert_into_symtable(sym_table, "gl_Color", VEC4, ATTRIBUTE, scope_num);
+    insert_into_symtable(sym_table, "gl_Secondary", VEC4, ATTRIBUTE, scope_num);
+    insert_into_symtable(sym_table, "gl_FogFragCoord", VEC4, ATTRIBUTE, scope_num);
+    insert_into_symtable(sym_table, "gl_Light_Half", VEC4, UNIFORM, scope_num);
+    insert_into_symtable(sym_table, "gl_Light_Ambient", VEC4, UNIFORM, scope_num);
+    insert_into_symtable(sym_table, "gl_Material_Shininess", VEC4, UNIFORM, scope_num);
+    insert_into_symtable(sym_table, "env1", VEC4, UNIFORM, scope_num);
+    insert_into_symtable(sym_table, "env2", VEC4, UNIFORM, scope_num);
+    insert_into_symtable(sym_table, "env3", VEC4, UNIFORM, scope_num);
 
     switch((int)ast->kind){
         case 0:
@@ -51,21 +50,21 @@ void symbol_table(node *ast) {
         case 4:
             symbol_table(ast->type_declaration.type);
 
-            insert_into_symtable(ast->type_declaration.id, ast->type_declaration.type->type.type_kind, NONCONST, scope_num);
+            insert_into_symtable(sym_table, ast->type_declaration.id, ast->type_declaration.type->type.type_kind, NONCONST, scope_num);
             break;
 
         case 5:
             symbol_table(ast->assign_declaration.type);
             symbol_table(ast->assign_declaration.expression);
 
-            insert_into_symtable(ast->assign_declaration.id, ast->assign_declaration.type->type.type_kind, NONCONST, scope_num);
+            insert_into_symtable(sym_table, ast->assign_declaration.id, ast->assign_declaration.type->type.type_kind, NONCONST, scope_num);
             break;
 
         case 6:
             symbol_table(ast->const_declaration.type);
             symbol_table(ast->const_declaration.expression);
 
-            insert_into_symtable(ast->const_declaration.id, ast->const_declaration.type->type.type_kind, _CONST, scope_num); 
+            insert_into_symtable(sym_table, ast->const_declaration.id, ast->const_declaration.type->type.type_kind, _CONST, scope_num); 
             break;
 
         case 7:
@@ -108,13 +107,13 @@ void symbol_table(node *ast) {
 
             switch(ast->func_expr.func) {
                 case 0:
-                    insert_into_symtable("dp3", FUNCTION, NONCONST, scope_num);                                
+                    insert_into_symtable(sym_table, "dp3", FUNCTION, NONCONST, scope_num);                                
                     break;
                 case 1:
-                    insert_into_symtable("lit", FUNCTION, NONCONST, scope_num);                                                                
+                    insert_into_symtable(sym_table, "lit", FUNCTION, NONCONST, scope_num);                                                                
                     break;
                 case 2:
-                    insert_into_symtable("rsq", FUNCTION, NONCONST, scope_num);
+                    insert_into_symtable(sym_table, "rsq", FUNCTION, NONCONST, scope_num);
                     break;
                 default:
                     break;

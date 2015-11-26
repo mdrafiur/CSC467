@@ -6,7 +6,6 @@
 #include "ast.h"
 #include "common.h"
 #include "parser.tab.h"
-/*#include "symtable.h"*/
 
 #define DEBUG_PRINT_TREE 0
 
@@ -460,6 +459,7 @@ void ast_print(node * ast, int flag) {
 	/*11*/
 	case NUNARY_EXPR:
 		printf("(UNARY ");
+		printType(ast->unary_expr.type);
 		printOp(ast->unary_expr.op);
     	ast_print(ast->unary_expr.right,0);
 		printf(")\n");
@@ -467,6 +467,7 @@ void ast_print(node * ast, int flag) {
 		
 	case NBINARY_EXPR:
 		printf("(BINARY ");
+		printType(ast->binary_expr.type);
 		printOp(ast->binary_expr.op);
     	ast_print(ast->binary_expr.left,0);
     	ast_print(ast->binary_expr.right,0);
@@ -522,7 +523,7 @@ void ast_print(node * ast, int flag) {
 	case NID_VARIABLE:
 		if(flag == 0)
 		{
-			/*type = get_symtable_type(ast->array_variable.id);
+			/*type = get_data_type(ast->array_variable.id);
 			printType(type);*/
 			printf("%s ", ast->id_variable.id);
 		}else{
@@ -533,20 +534,20 @@ void ast_print(node * ast, int flag) {
 	case NARRAY_VARIABLE:
 		if(flag == 0)
 		{
-			/*type = get_symtable_type(ast->array_variable.id);
-			printType(type);*/
+			type = get_data_type(sym_table, ast->array_variable.id);
+			printType(type);
 			printf("%s ", ast->id_variable.id);
 
 		}else{
 			printf("(INDEX ");
-			/*type = get_symtable_type(ast->array_variable.id);
-			if(type == IVEC2 | type == IVEC3 | type == IVEC4){
+			type = get_data_type(sym_table, ast->array_variable.id);
+			if(type == IVEC2 || type == IVEC3 || type == IVEC4){
 				printf("int "); 
-			}else if(type == VEC2 | type == VEC3 | type == VEC4){
+			}else if(type == VEC2 || type == VEC3 || type == VEC4){
 				printf("float ");
-			}else if(type == BVEC2 | type == BVEC3 | type == BVEC4){
+			}else if(type == BVEC2 || type == BVEC3 || type == BVEC4){
 				printf("bool ");
-			}*/
+			}
 			printf("%s %d ", ast->array_variable.id, ast->array_variable.index);
 		}
 		break;

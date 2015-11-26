@@ -82,7 +82,7 @@ node *ast_allocate(node_kind kind, ...) {
 		ast->if_else_statement.condition = va_arg(args, node *);
 		ast->if_else_statement.statement = va_arg(args, node *);
 		ast->if_else_statement.else_statement = va_arg(args, node *);
-		ast->scope.l = va_arg(args, int);
+		ast->if_else_statement.l = va_arg(args, int);
 		break;
 
 	case NSCOPE_STATEMENT:
@@ -94,7 +94,7 @@ node *ast_allocate(node_kind kind, ...) {
 	case NUNARY_EXPR:
 		ast->unary_expr.op = va_arg(args, int);
     	ast->unary_expr.right = va_arg(args, node *);
-		ast->scope.l = va_arg(args, int);
+		ast->unary_expr.l = va_arg(args, int);
     	break;
 		
 	case NBINARY_EXPR:
@@ -128,7 +128,7 @@ node *ast_allocate(node_kind kind, ...) {
 
 	case NINT_EXPR:
 		ast->int_expr.number = va_arg(args, int);
-		ast->scope.l = va_arg(args, int);
+		ast->int_expr.l = va_arg(args, int);
 		break;
 
 	case NFLOAT_EXPR:
@@ -384,6 +384,13 @@ void ast_print(node * ast, int flag) {
 		
 		case NSCOPE:
 			printf("(SCOPE ");
+			//this is to make sure at least one declarations/statement is printed even tho they are NULL
+			if(ast->scope.declarations == NULL){
+				printf("(DECLARATIONS) ");
+			}
+			if(ast->scope.statements == NULL){
+				printf("(STATEMENTS)\n");
+			}
 			ast_print(ast->scope.declarations, 0);
 			ast_print(ast->scope.statements, 0);
 			printf(")\n");
@@ -495,19 +502,19 @@ void ast_print(node * ast, int flag) {
 		break;
 
 	case NINT_EXPR:
-		printf("<%d>\n", ast->int_expr.number);
+		printf("%d ", ast->int_expr.number);
 		break;
 
 	case NFLOAT_EXPR:
-		printf("<%f>\n", ast->float_expr.number);
+		printf("%f ", ast->float_expr.number);
 		break;
 
 	case NBOOL_EXPR:
-		printf("<bool ");
+		printf("bool ");
 		if(ast->bool_expr.boolean == 0){
-			printf("true>\n");
+			printf("true ");
 		}else if(ast->bool_expr.boolean == 1){
-			printf("false>\n");
+			printf("false ");
 		}
 		break;
 	
@@ -519,7 +526,7 @@ void ast_print(node * ast, int flag) {
 			printType(type);*/
 			printf("%s ", ast->id_variable.id);
 		}else{
-			printf("<%s>\n", ast->id_variable.id);
+			printf("%s ", ast->id_variable.id);
 		}
 		break;
 
@@ -540,7 +547,7 @@ void ast_print(node * ast, int flag) {
 			}else if(type == BVEC2 | type == BVEC3 | type == BVEC4){
 				printf("bool ");
 			}*/
-			printf("%s <%d>\n", ast->array_variable.id, ast->array_variable.index);
+			printf("%s %d ", ast->array_variable.id, ast->array_variable.index);
 		}
 		break;
 
@@ -574,40 +581,40 @@ void ast_print(node * ast, int flag) {
 void printType(int type){
 	switch(type){
 		case INT:
-			printf("int\n");
+			printf("int ");
 			break;
 		case  IVEC2:
-			printf("ivec2\n");
+			printf("ivec2 ");
 			break;
 		case IVEC3:
-			printf("ivec3\n");
+			printf("ivec3 ");
 			break;
 		case IVEC4:
-			printf("ivec4\n");
+			printf("ivec4 ");
 			break;
 		case BOOL:
-			printf("bool\n");
+			printf("bool ");
 			break;
 		case BVEC2:
-			printf("bvec2\n");
+			printf("bvec2 ");
 			break;
 		case BVEC3:
-			printf("bvec3\n");
+			printf("bvec3 ");
 			break;
 		case BVEC4:
-			printf("bvec4\n");
+			printf("bvec4 ");
 			break;
 		case FLOAT:
-			printf("float\n");
+			printf("float ");
 			break;
 		case VEC2:
-			printf("vec2\n");
+			printf("vec2 ");
 			break;
 		case VEC3:
-			printf("vec3\n");
+			printf("vec3 ");
 			break;
 		case VEC4:
-			printf("vec4\n");
+			printf("vec4 ");
 			break;
 
 	}

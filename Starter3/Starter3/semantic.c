@@ -100,7 +100,7 @@ int semantic_check( node *ast) {
             }
 
             if(l_expr != r_expr){
-                fprintf(errorFile, "Error: Type mismatch in assignment\n"
+                fprintf(errorFile, "Error: Type mismatch in assignment\n");
                 errorOccurred = 1;
                 return -1;
             }
@@ -108,7 +108,7 @@ int semantic_check( node *ast) {
                 return l_expr;
                 
             type_class = get_tClass(ast->const_declaration.type->id_variable.id);
-            if(ast->const_declaration.type->kind != NINT_EXPR && ast->const_declaration.type->kind != NFLOAT_EXPR && ast->const_declaration.type->kind != NBOOL_EXPR && type_class != CONST && type_class != UNIFORM ) {
+            if(ast->const_declaration.type->kind != NINT_EXPR && ast->const_declaration.type->kind != NFLOAT_EXPR && ast->const_declaration.type->kind != NBOOL_EXPR && type_class != _CONST && type_class != UNIFORM ) {
                 fprintf(errorFile, "Error: const qualified variables must be initialized with a literal value or with a uniform variable\n");
                 errorOccurred = 1;
                 return -1;
@@ -227,7 +227,7 @@ int semantic_check( node *ast) {
                     break;
                 
                 default:
-                    fprintf(errorFile, "Error: Fuction argument doesn't match as expected.\n")
+                    fprintf(errorFile, "Error: Fuction argument doesn't match as expected.\n");
                     errorOccurred = 1;
                     return -1;
             }
@@ -252,7 +252,7 @@ int semantic_check( node *ast) {
             if(l_expr == r_expr)
                 return l_expr;
             else {
-                fprintf(ErrorFile, "Error: Type mismatch found\n");
+                fprintf(errorFile, "Error: Type mismatch found\n");
                 errorOccurred = 1;
                 return -1;
             }

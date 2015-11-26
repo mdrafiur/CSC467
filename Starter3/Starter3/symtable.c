@@ -1,17 +1,18 @@
+#include <assert.h>
 #include "symtable.h"
 
 symtable *symtable_init(void)
 {
-    symtable = malloc(sizeof(struct symtable_t));
-    assert(symtable);
+    symtable *head = (symtable *)malloc(sizeof(symtable));
+    assert(head);
 
-    symtable->num_item = 0;
-    symtable->head = NULL;
+    head->num_item = 0;
+    head->head = NULL;
               
-    return symtable;
+    return head;
 }
 
-void insert_into_symtable(char *sym_name, int type, int scope) {
+void insert_into_symtable(char *sym_name, int type, int tClass, int scope) {
             
     symtable_node *new_node;
                 
@@ -21,27 +22,28 @@ void insert_into_symtable(char *sym_name, int type, int scope) {
     new_node = (symtable_node *)malloc(sizeof(symtable_node));
     assert(new_node);
                                                         
-    new_node->name = (const char *)malloc(strlen(name) + 1);
+    new_node->name = malloc(strlen(sym_name) + 1);
     assert(new_node->name);
     strcpy(new_node->name, sym_name);
     new_node->dtype = type;
+    new_node->tClass = tClass;
     new_node->scope = scope;
 
-    new_node->next = symtable->head;
-    symtable->head = new_node;
-    symtable->num_item++;
+    new_node->next = head->head;
+    head->head = new_node;
+    head->num_item++;
     return;
     
 }
 
-bool lookup_symtable(const char *name)
+bool lookup_symtable(char *name)
 {
     symtable_node *current;
-    current = symtable->head;
+    current = head->head;
     assert(name);
 
     while(current) {
-        if(strcmp(current->sym_name, name) == 0)
+        if(strcmp(current->name, name) == 0)
             return true;
 
         current = current->next;
@@ -50,14 +52,14 @@ bool lookup_symtable(const char *name)
     return false;
 }
 
-int scope_check(const char *name, int scope)
+int scope_check(char *name, int scope)
 {
     symtable_node *current;
-    current = symtable->head;
+    current = head->head;
     assert(name);
 
     while(current) {
-        if(strcmp(current->sym_name, name) == 0 && current->scope == scope)
+        if(strcmp(current->name, name) == 0 && current->scope == scope)
             return current->dtype;
 
         current = current->next;
@@ -66,15 +68,15 @@ int scope_check(const char *name, int scope)
     return -1;
 }
 
-int get_data_type (const char *name)
+int get_data_type (char *name)
 {
     symtable_node *current;
-    current = symtable->head;
+    current = head->head;
     
     assert(name);
                
     while(current) {
-        if(strcmp(current->sym_name, name) == 0)
+        if(strcmp(current->name, name) == 0)
             return current->dtype;
          
         current = current->next;
@@ -83,15 +85,15 @@ int get_data_type (const char *name)
     return -1;
 }
 
-int get_tClass (const char *name)
+int get_tClass (char *name)
 {
     symtable_node *current;
-    current = symtable->head;
+    current = head->head;
     
     assert(name);
                
     while(current) {
-        if(strcmp(current->sym_name, name) == 0)
+        if(strcmp(current->name, name) == 0)
             return current->tClass;
          
         current = current->next;
@@ -102,23 +104,22 @@ int get_tClass (const char *name)
 
 int remove_from_symtable(char *sym_name)
 {
-    assert(name);
+    assert(sym_name);
+    symtable_node *current;
+    symtable_node *prev;
 
-    symtable_node *current = symtable->head;
-    symtable_node *prev = NULL;
-
-    for (current = symtable->head, prev = NULL; current; prev = current, current = current->next)
+    for (current = head->head, prev = NULL; current; prev = current, current = current->next)
     {
         if (strcmp(current->name, sym_name) == 0) {
 
             if (!prev)
-                symtable->head = symtable->head->next;
+                head->head = head->head->next;
             else
                 prev->next = current->next;
                                                                       
             free(current->name);
             free(current);
-            symtable->num_item--;
+            head->num_item--;
             return 0;
         }
     }

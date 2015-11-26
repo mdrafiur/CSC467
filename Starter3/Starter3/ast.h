@@ -60,6 +60,7 @@ typedef enum {
 
 typedef enum{
 	INT,
+    FUNCTION,
     IVEC2,
 	IVEC3,
 	IVEC4,
@@ -123,7 +124,7 @@ struct node_ {
 	
 	struct{
 		node* type;
-		char* id;
+		char *id;
 		int l;
 	}type_declaration;
 	
@@ -134,14 +135,14 @@ struct node_ {
 
 	struct{
 		node* type;
-		char* id;
+		char *id;
 		node* expression;
 		int l;
 	}assign_declaration;
 
 	struct{
 		node* type;
-		char* id;
+		char *id;
 		node* expression;
 		int l;
 	}const_declaration;

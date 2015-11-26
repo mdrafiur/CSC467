@@ -20,14 +20,10 @@
  * semantics analysis   semantic.c   semantic.h
  * code generator       codegen.c    codegen.h
  **********************************************************************/
-#include "common.h"
 
 /* Phases 3,4: Uncomment following includes as needed */
-#include "ast.h"
 //#include "codegen.h"
-#include "symtable.h"
-#include "symbol.h"
-#include "semantic.h"
+#include "common.h"
 
 /***********************************************************************
  * Default values for various files. Note assumption that default files
@@ -91,7 +87,6 @@ int main (int argc, char *argv[]) {
   }
 
 /* Phase 3: Call the AST dumping routine if requested */
-  head = symtable_init();
   symbol_table(ast);
 
   if(semantic_check(ast) == -1)

@@ -10,8 +10,9 @@
 #define _COMMON_H_ 
 
 #include <stdio.h> /* for FILE */
+#include <assert.h>
+#include "semantic.h"
 
- 
 /**********************************************************************
  * Some useful definitions. These may be modified or removed as needed.
  *********************************************************************/ 
@@ -47,9 +48,6 @@ extern int dumpSource;
 extern int dumpAST;
 extern int dumpSymbols;
 extern int dumpInstructions;
-
-
-
 
 #endif
 

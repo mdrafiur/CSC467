@@ -1,7 +1,7 @@
 #ifndef _SEMANTIC_H
 #define _SEMANTIC_H
 
-#include <assert.h>
+#include "common.h"
 #include "ast.h"
 #include "symbol.h"
 #include "symtable.h"

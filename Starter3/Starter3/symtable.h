@@ -8,7 +8,7 @@ typedef struct symtable_t symtable;
 symtable *head;
 
 typedef enum {
-	CONST,
+	_CONST,
 	NONCONST,
 	ATTRIBUTE,
 	UNIFORM,
@@ -30,8 +30,8 @@ struct symtable_t {
 
 symtable *symtable_init(void);
 void insert_into_symtable(char *sym_name, int type, int tClass, int scope);
-bool lookup_symtable(const char *name);
-int scope_check(const char *name, int scope);
-int get_data_type (const char *name);
-int get_tClass (const char *name);
+bool lookup_symtable(char *name);
+int scope_check(char *name, int scope);
+int get_data_type (char *name);
+int get_tClass (char *name);
 int remove_from_symtable(char *sym_name);

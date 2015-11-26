@@ -66,7 +66,7 @@ int scope_check(const char *name, int scope)
     return -1;
 }
 
-int get_data_type (char *name)
+int get_data_type (const char *name)
 {
     symtable_node *current;
     current = symtable->head;
@@ -76,6 +76,23 @@ int get_data_type (char *name)
     while(current) {
         if(strcmp(current->sym_name, name) == 0)
             return current->dtype;
+         
+        current = current->next;
+    }
+
+    return -1;
+}
+
+int get_tClass (const char *name)
+{
+    symtable_node *current;
+    current = symtable->head;
+    
+    assert(name);
+               
+    while(current) {
+        if(strcmp(current->sym_name, name) == 0)
+            return current->tClass;
          
         current = current->next;
     }

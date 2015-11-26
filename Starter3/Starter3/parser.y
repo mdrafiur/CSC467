@@ -112,6 +112,7 @@ enum {
 %type <as_ast> variable
 %type <as_ast> arguments
 %type <as_ast> arguments_opt
+%type <as_ast> program
 
 // expect one shift/reduce conflict, where Bison chooses to shift
 // the ELSE.
@@ -130,7 +131,8 @@ enum {
  ***********************************************************************/
 program
   : scope 
-      { yTRACE("program -> scope\n") } 
+      { ast = ast_allocate(NPROG_SCOPE, $1, yyline);
+		yTRACE("program -> scope\n") } 
   ;
 
 scope
@@ -180,7 +182,7 @@ statement
       { $$ = ast_allocate(NIF_STATEMENT, $3, $5, yyline); 
 		yTRACE("statement -> IF ( expression ) statement \n") }
   | scope 
-      { $$ = ast_allocate(NSCOPE_STATEMENT, $1, yyline); 
+      { $$ = ast_allocate(NPROG_SCOPE, $1, yyline); 
 		yTRACE("statement -> scope \n") }
   | ';'
       { $$ = NULL;
@@ -344,3 +346,4 @@ void yyerror(char* s) {
     fprintf(errorFile, ": Reading token %s\n", yytname[YYTRANSLATE(yychar)]);
   }
 }
+

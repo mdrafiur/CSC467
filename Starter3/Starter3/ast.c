@@ -14,6 +14,7 @@ node *ast = NULL;
 
 node *ast_allocate(node_kind kind, ...) {
   va_list args;
+	printf("alloc: ");
 
   // make the node
   node *ast = (node *) malloc(sizeof(node));
@@ -173,18 +174,24 @@ node *ast_allocate(node_kind kind, ...) {
 		ast->type.l = va_arg(args, int);
 		break;
 
+	case NPROG_SCOPE:
+		ast->prog_scope.scope = va_arg(args, node *);
+		break;
+
   default: break;
   }
 
   va_end(args);
-
   return ast;
 }
 
 void ast_free(node *ast) {
-	int kind = ast->kind;
+	
 	if(ast == NULL)
 		return;
+	
+
+	node_kind kind = ast->kind;
 	
 	switch(kind){
 
@@ -212,14 +219,14 @@ void ast_free(node *ast) {
 	/*4*/
 	case NTYPE_DECLARATION:
 		ast_free(ast->type_declaration.type);
-    	free(ast->type_declaration.id);
+    	//free(ast->type_declaration.id);
 		free(ast);
 		ast = NULL;
    		break;
 
 	case NASSIGN_DECLARATION:
 		ast_free(ast->assign_declaration.type);
-		free(ast->assign_declaration.id);
+		//free(ast->assign_declaration.id);
 		ast_free(ast->assign_declaration.expression);
 		free(ast);
 		ast = NULL;
@@ -227,7 +234,7 @@ void ast_free(node *ast) {
 
 	case NCONST_DECLARATION:
 		ast_free(ast->const_declaration.type);
-		free(ast->const_declaration.id);
+		//free(ast->const_declaration.id);
 		ast_free(ast->const_declaration.expression);
 		free(ast);
 		ast = NULL;
@@ -256,11 +263,11 @@ void ast_free(node *ast) {
 		ast = NULL;
 		break;
 
-	case NSCOPE_STATEMENT:
+	/*case NSCOPE_STATEMENT:
 		ast_free(ast->scope_statement.scope);
 		free(ast);
 		ast = NULL;
-		break;
+		break;*/
 	
 	/*11*/
 	case NUNARY_EXPR:
@@ -272,6 +279,8 @@ void ast_free(node *ast) {
 	case NBINARY_EXPR:
     	ast_free(ast->binary_expr.left);
     	ast_free(ast->binary_expr.right);
+		free(ast);
+		ast = NULL;
     	break;
 
 	case NBRACKETS_EXPR:
@@ -351,6 +360,12 @@ void ast_free(node *ast) {
 		ast = NULL;
 		break;
 
+	case NPROG_SCOPE:
+		ast_free(ast->prog_scope.scope);
+		free(ast);
+		ast = NULL;
+		break;
+
 	default:break;
 	}
 	
@@ -361,7 +376,7 @@ void ast_print(node * ast, int flag) {
 		return;
 	
 	int kind = ast->kind;
-	//int type;
+	int type;
 	//a flag for variable printing
 	//0: accessed in statement
 	//1: accessed in expr
@@ -546,6 +561,10 @@ void ast_print(node * ast, int flag) {
 		printType(ast->type.type_kind);
 		break;
 
+	case NPROG_SCOPE:
+		ast_print(ast->prog_scope.scope, 0);
+		break;
+
 	default:break;
 	}
 
@@ -646,4 +665,5 @@ void printOp(int op){
 	}
 
 }
+
 

@@ -52,7 +52,8 @@ typedef enum {
 	NARGS_ARGUMENTS,
 	NEXPR_ARGUMENTS,
 	NARGUMENTS_OPT,
-	NTYPE
+	NTYPE,
+	NPROG_SCOPE
 } node_kind;
 
 
@@ -97,6 +98,11 @@ struct node_ {
   node_kind kind;
 
   union {
+
+	struct{
+		node* scope;
+	}prog_scope;
+
     struct {
        node *declarations ;
        node *statements;
@@ -147,7 +153,7 @@ struct node_ {
 	}assign_statement;
 
 	struct{
-		node* codition;
+		node* condition;
 		node* statement;
 		int l;
 	}if_statement;
@@ -242,7 +248,8 @@ struct node_ {
 		node* arguments;
 		int l;
 	}arguments_opt;
-
+	
+	
 
 
   };
@@ -251,5 +258,7 @@ struct node_ {
 node *ast_allocate(node_kind type, ...);
 void ast_free(node *ast);
 void ast_print(node * ast, int flag);
+void printType(int type);
+void printOp(int op);
 
 #endif /* AST_H_ */

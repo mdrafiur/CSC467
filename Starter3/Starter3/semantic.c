@@ -165,10 +165,6 @@ int semantic_check( node *ast) {
             break;
 
         case 10:
-            ct_scope++;
-            r_expr = semantic_check(ast->prog_scope.scope);
-            ct_scope--;
-            return r_expr;
             break;
 	
 		//unary expression
@@ -445,7 +441,14 @@ int semantic_check( node *ast) {
         case 25:
             return ast->type.type_kind;
             break;
-
+            
+        case 26:
+            ct_scope++;
+            r_expr = semantic_check(ast->prog_scope.scope);
+            ct_scope--;
+            return r_expr;
+	    break;
+	    
         default:
             return -1;
             break;

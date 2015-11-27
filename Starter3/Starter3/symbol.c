@@ -85,7 +85,7 @@ void symbol_table(node *ast) {
 
         case 10:
             scope_num++;
-            symbol_table(ast->scope_statement.scope);
+            symbol_table(ast->prog_scope.scope);
             scope_num--;
             break;
 

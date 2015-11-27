@@ -166,7 +166,7 @@ int semantic_check( node *ast) {
 
         case 10:
             ct_scope++;
-            r_expr = semantic_check(ast->scope_statement.scope);
+            r_expr = semantic_check(ast->prog_scope.scope);
             ct_scope--;
             return r_expr;
             break;
@@ -324,7 +324,6 @@ int semantic_check( node *ast) {
             break;
 
         case 16:
-
             break;
             
         case 17:

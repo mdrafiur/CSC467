@@ -93,7 +93,7 @@ int main (int argc, char *argv[]) {
   symbol_table(ast);
 
   if(semantic_check(ast) == -1)
-    fprintf(stderr, "SYMANTIC CHECK FAILED\n");
+    fprintf(stderr, "Error: semantic check failed !\n");
     
   if (dumpAST)
     ast_print(ast, 0);

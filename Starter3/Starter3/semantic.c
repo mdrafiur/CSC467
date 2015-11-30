@@ -1,51 +1,52 @@
 #include "semantic.h"
 
-int ct_scope = 0;
-int l_expr, r_expr;
+int scopeNum = 0;
+int check_prog_scope;
+int numArgs, x;
+int lhs, rhs;
 int type, type_class;
-int i;
 
-int semantic_check( node *ast) {
+int semantic_check(node *ast) {
 
     assert(ast);
-	int btype;
+    int btype;
 
     switch((int)ast->kind) {
         case 0:
             break;
 
         case 1:
-            r_expr = semantic_check(ast->scope.declarations);
-            l_expr = semantic_check(ast->scope.statements);
+            lhs = semantic_check(ast->scope.declarations);
+            rhs = semantic_check(ast->scope.statements);
 
-            if(r_expr == -1 || l_expr == -1)
+            if(lhs == -1 || rhs == -1)
                 return -1;
             else
                 return 0;
             break;
 
         case 2:
-            l_expr = semantic_check(ast->declarations.declaration);
-            r_expr = semantic_check(ast->declarations.declarations);
+            lhs = semantic_check(ast->declarations.declarations);
+            rhs = semantic_check(ast->declarations.declaration);
 
-            if(r_expr == -1 || l_expr == -1)
+            if(lhs == -1 || rhs == -1)
                 return -1;
             else
-                return l_expr;
+                return rhs;
             break;
 
         case 3:
-            l_expr = semantic_check(ast->statements.statement);
-            r_expr = semantic_check(ast->statements.statements);
+            lhs = semantic_check(ast->statements.statements);
+            rhs = semantic_check(ast->statements.statement);
 
-            if(r_expr == -1 || l_expr == -1)
+            if(lhs == -1 || rhs == -1)
                 return -1;
             else
-                return l_expr;
+                return rhs;
             break;
 
         case 4:
-            if(scope_check(sym_table, ast->type_declaration.id, ct_scope) == -1) {
+            if(isVarDeclared(sym_table, ast->type_declaration.id, scopeNum)) {
                 fprintf(errorFile, "Error: Variable cannot be re-declared within the same scope\n");
                 errorOccurred = 1;    
                 return -1;
@@ -53,205 +54,204 @@ int semantic_check( node *ast) {
             else
                 return semantic_check(ast->type_declaration.type);
             break;
-            
-        case 5:
-            l_expr = semantic_check(ast->assign_declaration.type);
-            r_expr = semantic_check(ast->assign_declaration.expression);
 
-            if(r_expr == -1 || l_expr == -1)
+        case 5:
+            lhs = semantic_check(ast->assign_declaration.type);
+            rhs = semantic_check(ast->assign_declaration.expression);
+
+            if(rhs == -1 || lhs == -1)
                 return -1;
 
-            if(scope_check(sym_table, ast->assign_declaration.id, ct_scope) == -1) {
+            if(isVarDeclared(sym_table, ast->assign_declaration.id, scopeNum)) {
                 fprintf(errorFile, "Error: Variable cannot be re-declared within the same scope\n");
                 errorOccurred = 1;
                 return -1;                                                            
             }
 
-            if(l_expr == r_expr)
-                return l_expr;
+            if(lhs == rhs)
+                return lhs;
+
+            else if((lhs == IVEC2 || lhs == IVEC3 || lhs == IVEC4) && (rhs == INT))
+                return INT;
+
+            else if((lhs == BVEC2 || lhs == BVEC3 || lhs == BVEC4) && (rhs == BOOL))
+                return BOOL;
+
+            else if((lhs == VEC2 || lhs == VEC3 || lhs == VEC4) && (rhs == FLOAT))
+                return FLOAT;
 
             else {
-                fprintf(errorFile, "Error: Type mismatch in assignment\n");
+                fprintf(errorFile, "Error: Declaration failed, type mismatch in assignment\n");
                 errorOccurred = 1;
                 return -1;
             }
-
-            if((l_expr == IVEC2 || l_expr == IVEC3 || l_expr == IVEC4) && (r_expr == INT))
-                return INT;
-                                                                                                            
-            if((l_expr == BVEC2 || l_expr == BVEC3 || l_expr == BVEC4) && (r_expr == BOOL))
-                return BOOL;
-
-            if((l_expr == VEC2 || l_expr == VEC3 || l_expr == VEC4) && (r_expr == FLOAT))
-                return FLOAT;
             break;
 
         case 6: 
-            l_expr = semantic_check(ast->const_declaration.type);
-            r_expr = semantic_check(ast->const_declaration.expression);
+            lhs = semantic_check(ast->const_declaration.type);
+            rhs = semantic_check(ast->const_declaration.expression);
 
-            if(r_expr == -1 || l_expr == -1)
+            if(rhs == -1 || lhs == -1)
                 return -1;
 
-            if(scope_check(sym_table, ast->const_declaration.id, ct_scope) == -1) {
-                fprintf(errorFile, "Error: Variable cannot be re-declared within the same scope\n");
+            type_class = get_tClass(sym_table, ast->const_declaration.type->id_variable.id);
+            if(ast->const_declaration.type->kind != NINT_EXPR && ast->const_declaration.type->kind != NFLOAT_EXPR && ast->const_declaration.type->kind != NBOOL_EXPR && type_class != _CONST && type_class != UNIFORM) {
+                fprintf(errorFile, "Error: 'const' qualified variables must be initialized with a literal value or with a uniform variable\n");
                 errorOccurred = 1;
-                return -1;                                                            
+                return -1;
             }
 
-            if(l_expr != r_expr){
+            if(lhs == rhs)
+                return lhs;
+
+            else if((lhs == IVEC2 || lhs == IVEC3 || lhs == IVEC4) && (rhs == INT))
+                return INT;
+
+            else if((lhs == VEC2 || lhs == VEC3 || lhs == VEC4) && (rhs == FLOAT))
+                return FLOAT;
+
+            else if((lhs == BVEC2 || lhs == BVEC3 || lhs == BVEC4) && (rhs == BOOL))
+                return BOOL;
+
+            else {
                 fprintf(errorFile, "Error: Type mismatch in assignment\n");
                 errorOccurred = 1;
                 return -1;
             }
-            else
-                return l_expr;
-                
-            type_class = get_tClass(sym_table, ast->const_declaration.type->id_variable.id);
-            if(ast->const_declaration.type->kind != NINT_EXPR && ast->const_declaration.type->kind != NFLOAT_EXPR && ast->const_declaration.type->kind != NBOOL_EXPR && type_class != _CONST && type_class != UNIFORM ) {
-                fprintf(errorFile, "Error: const qualified variables must be initialized with a literal value or with a uniform variable\n");
-                errorOccurred = 1;
-                return -1;
-            }
-
-            if((l_expr == IVEC2 || l_expr == IVEC3 || l_expr == IVEC4) && (r_expr == INT))
-                return INT;
-
-            if((l_expr == VEC2 || l_expr == VEC3 || l_expr == VEC4) && (r_expr == FLOAT))
-                return FLOAT;
-                                                                                                            
-            if((l_expr == BVEC2 || l_expr == BVEC3 || l_expr == BVEC4) && (r_expr == BOOL))
-                return BOOL;
             break;
-        
-		//NASSIGN_STATEMENT
-        case 7:
-			l_expr = semantic_check(ast->assign_statement.variable);
-			r_expr = semantic_check(ast->assign_statement.expression);
 
-			if(l_expr ==  -1 || r_expr == -1){
-				return -1;
-			}else
-				return CheckTypes(r_expr, l_expr);
-			
+            //NASSIGN_STATEMENT
+        case 7:
+            lhs = semantic_check(ast->assign_statement.variable);
+            rhs = semantic_check(ast->assign_statement.expression);
+
+            if(lhs ==  -1 || rhs == -1){
+                return -1;
+            }else
+                return CheckTypes(rhs, lhs);
+
             break;
 
         case 8:
-            l_expr = semantic_check(ast->if_statement.condition);
-                        
-            if(l_expr != BOOL) {
-                fprintf(errorFile, "Error: Condition must be of type to bool");
+            lhs = semantic_check(ast->if_statement.condition);
+
+            if(lhs == -1)
+                return -1;
+
+            if(lhs == BOOL) 
+                semantic_check(ast->if_statement.statement);
+
+            else {
+                fprintf(errorFile, "Error: Condition must be of type 'bool'\n");
                 errorOccurred = 1;
                 return -1;
             }                                     
-                 
-            else
-                semantic_check(ast->if_statement.statement);
             break;
 
         case 9:
-            l_expr = semantic_check(ast->if_else_statement.condition);
+            lhs = semantic_check(ast->if_else_statement.condition);
 
-            if(l_expr != BOOL) {
-                fprintf(errorFile, "Error: Condition must be of type bool\n");
-                errorOccurred = 1;                                                        
+            if(lhs == -1)
                 return -1;
-            }
-            
-            else {
+
+            if(lhs == BOOL) {
                 semantic_check(ast->if_else_statement.statement);
                 semantic_check(ast->if_else_statement.else_statement);
+            }
+            else {
+                fprintf(errorFile, "Error: Condition must be of type 'bool'\n");
+                errorOccurred = 1;                                                        
+                return -1;
             }
             break;
 
         case 10:
+            scopeNum++;
+            check_prog_scope = semantic_check(ast->prog_scope.scope);
+            scopeNum--;
+            return check_prog_scope;
             break;
-	
-		//unary expression
+
+            //unary expression
         case 11:
-            r_expr = semantic_check(ast->unary_expr.right);
-			if(r_expr == -1){
-				return -1;
-			}
+            rhs = semantic_check(ast->unary_expr.right);
+
+            if(rhs == -1)
+                return -1;
+
             if(ast->unary_expr.op == MINUS_OPS) {
-                                                    
-                if(r_expr == BOOL || r_expr == BVEC2|| r_expr == BVEC3|| r_expr == BVEC4){
-                    fprintf(errorFile, "Error: All operands to arithmetic operators must have arithmetic types.\n");
+
+                if(rhs == BOOL || rhs == BVEC2|| rhs == BVEC3|| rhs == BVEC4){
+                    fprintf(errorFile, "Error: All operands to arithmetic operators must have arithmetic types\n");
                     errorOccurred = 1;                                                                                                
                     return -1;
                 }
-                else{
-					ast->unary_expr.type = r_expr;
-                    return r_expr;
-				}
+                else
+                    return rhs;
             }
-            else if(ast->unary_expr.op == NOT_OPS) {
-                
-                if(r_expr != BOOL || r_expr != BVEC2 || r_expr != BVEC3 || r_expr != BVEC4) {
+            if(ast->unary_expr.op == NOT_OPS) {
+
+                if(rhs != BOOL || rhs != BVEC2 || rhs != BVEC3 || rhs != BVEC4) {
                     fprintf(errorFile, "Error: All operands to logical operators must have boolean types\n");
                     errorOccurred = 1;
                     return -1;
-                    }
-                else{
-					ast->unary_expr.type = r_expr;
-                    return r_expr;
-				}
+                }
+                else
+                    return rhs;
+            }
+            break;
+
+            //NBINARY_EXPR
+        case 12:
+            rhs = semantic_check(ast->binary_expr.right);
+            lhs = semantic_check(ast->binary_expr.left);
+            btype = CheckTypes(rhs, lhs);
+
+            if(rhs == -1 ||lhs == -1){
+                return -1;
+            }else if(btype == -1){
+                fprintf(errorFile, "Error: The operands to binary operators must have same base types\n");
+                errorOccurred = 1;
+                return -1;
+            }else if(vectorChecking(rhs) == 1 && vectorChecking(lhs) == 1){
+                if(vectorCompare(rhs, lhs) == 0){
+                    fprintf(errorFile, "Error: The vector operands to binary operators must have same order\n");
+                    errorOccurred = 1;
+                    return -1;
+                }else{
+                    ast->binary_expr.type = btype;
+                    return btype;
+                }
+            }else if(ast->binary_expr.op == AND_OPS || ast->binary_expr.op == OR_OPS ||ast->binary_expr.op == EQ_OPS || ast->binary_expr.op == NEQ_OPS){
+                if(rhs != BOOL || rhs != BVEC2 || rhs != BVEC3 || rhs != BVEC4 || lhs != BOOL || lhs != BVEC2 || lhs != BVEC3 || lhs != BVEC4){
+                    fprintf(errorFile, "Error: All operands to logical operators must have boolean types\n");
+                    errorOccurred = 1;
+                    return -1;
+                }else if(vectorChecking(rhs) == 1 || vectorChecking(lhs) == 1){
+                    fprintf(errorFile, "Error: The operands to logical operators must be both vectors or both scalars\n");
+                    errorOccurred = 1;
+                    return -1;
+                }else{
+                    ast->binary_expr.type = btype;
+                    return btype;
+                }
+            }else if(ast->binary_expr.op == LESS_OPS || ast->binary_expr.op == LEQ_OPS ||ast->binary_expr.op == GTR_OPS || ast->binary_expr.op == GEQ_OPS || ast->binary_expr.op == PLUS_OPS || ast->binary_expr.op == MINUS_OPS  || ast->binary_expr.op == DIVIDE_OPS || ast->binary_expr.op == POW_OPS || ast->binary_expr.op == TIMES_OPS){
+                if(rhs == BOOL || rhs == BVEC2|| rhs == BVEC3|| rhs == BVEC4 || lhs == BOOL || lhs == BVEC2|| lhs == BVEC3|| lhs == BVEC4){
+                    fprintf(errorFile, "Error: All operands to arithmetic operators must have arithmetic types.\n");
+                    errorOccurred = 1;                                                                                                
+                    return -1;
+                }else if( ast->binary_expr.op != TIMES_OPS && (vectorChecking(rhs) == 1 || vectorChecking(lhs) == 1)){
+                    fprintf(errorFile, "Error: The operands to arithmetic operators (except for times) must be both vectors or both scalars\n");
+                    errorOccurred = 1;
+                    return -1;
+                }else{
+                    ast->binary_expr.type = btype;
+                    return btype;
+                }
             }
             else
                 return -1;
-            break;
-	
-		//NBINARY_EXPR
-        case 12:
-			r_expr = semantic_check(ast->binary_expr.right);
-			l_expr = semantic_check(ast->binary_expr.left);
-			btype = CheckTypes(r_expr, l_expr);
-			
-			if(r_expr == -1 ||l_expr == -1){
-				return -1;
-			}else if(btype == -1){
-					fprintf(errorFile, "Error: The operands to binary operators must have same base types\n");
-                    errorOccurred = 1;
-                    return -1;
-			}else if(vectorChecking(r_expr) == 1 && vectorChecking(l_expr) == 1){
-				if(vectorCompare(r_expr, l_expr) == 0){
-					fprintf(errorFile, "Error: The vector operands to binary operators must have same order\n");
-                    errorOccurred = 1;
-                    return -1;
-				}else{
-					ast->binary_expr.type = btype;
-					return btype;
-				}
-			}else if(ast->binary_expr.op == AND_OPS || ast->binary_expr.op == OR_OPS ||ast->binary_expr.op == EQ_OPS || ast->binary_expr.op == NEQ_OPS){
-				if(r_expr != BOOL || r_expr != BVEC2 || r_expr != BVEC3 || r_expr != BVEC4 || l_expr != BOOL || l_expr != BVEC2 || l_expr != BVEC3 || l_expr != BVEC4){
-					fprintf(errorFile, "Error: All operands to logical operators must have boolean types\n");
-                    errorOccurred = 1;
-                    return -1;
-				}else if(vectorChecking(r_expr) == 1 || vectorChecking(l_expr) == 1){
-					fprintf(errorFile, "Error: The operands to logical operators must be both vectors or both scalars\n");
-                    errorOccurred = 1;
-                    return -1;
-				}else{
-					ast->binary_expr.type = btype;
-					return btype;
-				}
-			}else if(ast->binary_expr.op == LESS_OPS || ast->binary_expr.op == LEQ_OPS ||ast->binary_expr.op == GTR_OPS || ast->binary_expr.op == GEQ_OPS || ast->binary_expr.op == PLUS_OPS || ast->binary_expr.op == MINUS_OPS  || ast->binary_expr.op == DIVIDE_OPS || ast->binary_expr.op == POW_OPS || ast->binary_expr.op == TIMES_OPS){
-				if(r_expr == BOOL || r_expr == BVEC2|| r_expr == BVEC3|| r_expr == BVEC4 || l_expr == BOOL || l_expr == BVEC2|| l_expr == BVEC3|| l_expr == BVEC4){
-					fprintf(errorFile, "Error: All operands to arithmetic operators must have arithmetic types.\n");
-                    errorOccurred = 1;                                                                                                
-                    return -1;
-				}else if( ast->binary_expr.op != TIMES_OPS && (vectorChecking(r_expr) == 1 || vectorChecking(l_expr) == 1)){
-					fprintf(errorFile, "Error: The operands to arithmetic operators (except for times) must be both vectors or both scalars\n");
-                    errorOccurred = 1;
-                    return -1;
-				}else{
-					ast->binary_expr.type = btype;
-					return btype;
-				}
-			}
-			else
-				return -1;
-		
+
 
             break;
 
@@ -260,58 +260,82 @@ int semantic_check( node *ast) {
             break;
 
         case 14:
-            type = semantic_check(ast->func_expr.arguments_opt);
+            rhs = semantic_check(ast->func_expr.arguments_opt);
+
+            if(rhs == -1)
+                return -1;
 
             switch(ast->func_expr.func) {
-        
+
                 case 0:
-                    if(type == IVEC3 || type == IVEC4)
+                    if(rhs == IVEC3 || rhs == IVEC4)
                         return INT;
-                    else if(type == VEC3 || type == VEC4)
+                    else if(rhs == VEC3 || rhs == VEC4)
                         return FLOAT;
-                    else
+                    else {
+                        fprintf(errorFile, "Error: Function argument doesn't match as expected\n");
+                        errorOccurred = 1;
                         return -1;
+                    }
                     break;
 
                 case 1:
-                    if(type == VEC4)
+                    if(rhs == VEC4)
                         return VEC4;
-                    else
+                    else {
+                        fprintf(errorFile, "Error: Function argument doesn't match as expected\n");
+                        errorOccurred = 1;
                         return -1;
+                    }
                     break;
 
                 case 2:
-                    if(type == FLOAT || type == INT)
+                    if(rhs == FLOAT || rhs == INT)
                         return FLOAT;
-                    else
+                    else {
+                        fprintf(errorFile, "Error: Function argument doesn't match as expected\n");
+                        errorOccurred = 1;
                         return -1;
+                    }
                     break;
-                
+
                 default:
-                    fprintf(errorFile, "Error: Fuction argument doesn't match as expected.\n");
+                    fprintf(errorFile, "Error: Function name doesn't match as expected\n");
                     errorOccurred = 1;
                     return -1;
+                    break;
             }
             break;
 
         case 15:
-            l_expr = semantic_check(ast->type_expr.type);
-            r_expr = semantic_check(ast->type_expr.arguments_opt);
+            lhs = semantic_check(ast->type_expr.type);
+            rhs = semantic_check(ast->type_expr.arguments_opt);
 
-            if(l_expr == -1 || r_expr == -1)
+            if(lhs == -1 || rhs == -1)
                 return -1;
 
-            if((l_expr == IVEC2 || l_expr == IVEC3 || l_expr == IVEC4) && (r_expr == INT))
+            numArgs = countArg(ast->type_expr.arguments_opt);
+
+            if((lhs == IVEC2 && numArgs == 2) || (lhs == IVEC3 && numArgs == 3) || (lhs == IVEC4 && numArgs == 4) || (lhs == BVEC2 && numArgs == 2) || (lhs == BVEC3 && numArgs == 3) || (lhs == BVEC4 && numArgs == 4) || (lhs == VEC2 && numArgs == 2) || (lhs == VEC3 && numArgs == 3) || (lhs == VEC4 && numArgs == 4) || (lhs == BOOL && numArgs == 1) || (lhs == INT && numArgs == 1) || (lhs == FLOAT && numArgs == 1))
+                ;
+            else {
+                fprintf(errorFile, "Error: Costructors for basic types (bool, int, float) must have one argument and vector types must have as many arguments as there are elements in the vector\n");
+                errorOccurred = 1;
+                return -1;
+            }
+
+            if(lhs == rhs)
+                return lhs;
+
+            else if((lhs == IVEC2 || lhs == IVEC3 || lhs == IVEC4) && (rhs == INT))
                 return INT;
 
-            if((l_expr == VEC2 || l_expr == VEC3 || l_expr == VEC4) && (r_expr == FLOAT))
+            else if((lhs == VEC2 || lhs == VEC3 || lhs == VEC4) && (rhs == FLOAT))
                 return FLOAT;
 
-            if((l_expr == BVEC2 || l_expr == BVEC3 || l_expr == BVEC4) && (r_expr == BOOL))
+            else if((lhs == BVEC2 || lhs == BVEC3 || lhs == BVEC4) && (rhs == BOOL))
                 return BOOL;
-
-            if(l_expr == r_expr)
-                return l_expr;
+            
             else {
                 fprintf(errorFile, "Error: Type mismatch found\n");
                 errorOccurred = 1;
@@ -320,8 +344,9 @@ int semantic_check( node *ast) {
             break;
 
         case 16:
+            return semantic_check(ast->var_expr.variable);            
             break;
-            
+
         case 17:
             return INT;
             break;
@@ -335,94 +360,43 @@ int semantic_check( node *ast) {
             break;
 
         case 20:
+            if(isVarDeclaredInScope(sym_table, ast->id_variable.id, scopeNum)) {
+                fprintf(errorFile, "Error: Variable cannot be used before it is declared\n");
+                errorOccurred = 1;
+                return -1;
+            }
+            else 
+                return get_data_type(sym_table, ast->id_variable.id);
             break;
 
         case 21:
-            i = ast->array_variable.index;
+            x = ast->array_variable.index;
             type = get_data_type(sym_table, ast->array_variable.id);
 
-            switch(type) {
-                    
-                case IVEC2:
-                    if(i >= 2) {
-                        fprintf(errorFile, "Error: i limit exceeded.\n");
-                        errorOccurred = 1;                        
-                        return -1;
-                    }                                                                                                                                                              
-                    break;
-                case IVEC3:
-                    if(i >= 3) {
-                        fprintf(errorFile, "Error: i limit exceeded.\n");
-                        errorOccurred = 1;
-                        return -1;
-                    }
-                    break;
-                case IVEC4:
-                    if(i >= 4) {
-                        fprintf(errorFile, "Error: i limit exceeded.\n");
-                        errorOccurred = 1;
-                        return -1;
-                    }
-                    break;
-                case VEC2:
-                    if(i >= 2) {
-                        fprintf(errorFile, "Error: i limit exceeded.\n");
-                        errorOccurred = 1;
-                        return -1;
-                    }
-                    break;
-                case VEC3:
-                    if(i >= 3) {
-                        fprintf(errorFile, "Error: i limit exceeded.\n");
-                        errorOccurred = 1;
-                        return -1;
-                    }
-                    break;
-                case VEC4:
-                    if(i >= 4) {
-                        fprintf(errorFile, "Error: i limit exceeded.\n");
-                        errorOccurred = 1;
-                        return -1;
-                    }
-                case BVEC2:
-                    break;
-                    if(i >= 2) {
-                        fprintf(errorFile, "Error: i limit exceeded.\n");
-                        errorOccurred = 1;
-                        return -1;
-                    }
-                    break;
-                case BVEC3:
-                    if(i >= 3) {
-                        fprintf(errorFile, "Error: i limit exceeded.\n");
-                        errorOccurred = 1;
-                        return -1;
-                    }
-                    break;
-                case BVEC4:
-                    if(i >= 4) {
-                        fprintf(errorFile, "Error: i limit exceeded.\n");
-                        errorOccurred = 1;
-                        return -1;
-                    }
-                    break;
-                default:
-                    fprintf(errorFile, "Error: VEC type not found.\n");
-                    errorOccurred = 1;
-                    return -1;
+            if(type != IVEC2 || type != IVEC3 || type != IVEC4 || type != BVEC2 || type != BVEC3 || type != BVEC4 || type != VEC2 || type != VEC3 || type != VEC4) {
+                fprintf(errorFile, "Error: Only 'vec' type supported\n");
+                errorOccurred = 1;
+                return -1;
+            }
+            else if((type == IVEC2 && x < 2) || (type == IVEC3 && x < 3) || (type == IVEC4 && x < 4) || (type == BVEC2 && x < 2) || (type == BVEC3 && x < 3) || (type == BVEC4 && x < 4) || (type == VEC2 && x < 2) || (type == VEC3 && x < 3) || (type == VEC4 && x < 4))
+                ;
+            else {
+                fprintf(errorFile, "Error: Index limit exceeded\n");
+                errorOccurred = 1;
+                return -1;
             }
             break;
 
         case 22:
-            r_expr = semantic_check(ast->args_arguments.arguments);
-            l_expr = semantic_check(ast->args_arguments.expression);
-                        
-            if(l_expr == -1 || r_expr == -1)
+            lhs = semantic_check(ast->args_arguments.arguments);
+            rhs = semantic_check(ast->args_arguments.expression);
+
+            if(lhs == -1 || rhs == -1)
                 return -1;
 
-            else if(l_expr == r_expr)
-                return r_expr;
-                                                                                
+            else if(lhs == rhs)
+                return lhs;
+
             else {
                 fprintf(errorFile, "Error: Mismatch in arguments\n");
                 errorOccurred = 1;
@@ -441,14 +415,14 @@ int semantic_check( node *ast) {
         case 25:
             return ast->type.type_kind;
             break;
-            
+
         case 26:
-            ct_scope++;
-            r_expr = semantic_check(ast->prog_scope.scope);
-            ct_scope--;
-            return r_expr;
-	    break;
-	    
+            scopeNum++;
+            check_prog_scope = semantic_check(ast->prog_scope.scope);
+            scopeNum--;
+            return check_prog_scope;
+            break;
+
         default:
             return -1;
             break;
@@ -458,75 +432,141 @@ int semantic_check( node *ast) {
 
 //returns 1 if it is vector
 int vectorChecking(int type){
-	if(type ==  IVEC2 || type == IVEC3 || type == IVEC4 || type == BVEC2 || type == BVEC3 || type == BVEC4 ||type == VEC2 ||type == VEC3 || type == VEC4){
-		return 1;
+    if(type ==  IVEC2 || type == IVEC3 || type == IVEC4 || type == BVEC2 || type == BVEC3 || type == BVEC4 ||type == VEC2 ||type == VEC3 || type == VEC4){
+        return 1;
 
-	}else{
-		return 0;
-	}
+    }else{
+        return 0;
+    }
 
 }
 
 //return 1 if matches, 0 if mismatch
 int vectorCompare(int type1, int type2){
-	int isTrue = 0;
-	if(type1 == IVEC2 && type2 == IVEC2){
-		isTrue = 1;
-	}else if(type1 == BVEC2 && type2 == BVEC2){
-		isTrue = 1;
-	}else if(type1 == VEC2 && type2 == VEC2){
-		isTrue = 1;
-	}else if(type1 == IVEC3 && type2 == IVEC3){
-		isTrue = 1;
-	}else if(type1 == BVEC3 && type2 == BVEC3){
-		isTrue = 1;
-	}else if(type1 == VEC3 && type2 == VEC3){
-		isTrue = 1;
-	}else if(type1 == IVEC4 && type2 == IVEC4){
-		isTrue = 1;
-	}else if(type1 == BVEC4 && type2 == BVEC4){
-		isTrue = 1;
-	}else if(type1 == VEC4 && type2 == VEC4){
-		isTrue = 1;
-	}else {
-		isTrue = 0;
-	}
-	return isTrue;
+    int isTrue = 0;
+    if(type1 == IVEC2 && type2 == IVEC2){
+        isTrue = 1;
+    }else if(type1 == BVEC2 && type2 == BVEC2){
+        isTrue = 1;
+    }else if(type1 == VEC2 && type2 == VEC2){
+        isTrue = 1;
+    }else if(type1 == IVEC3 && type2 == IVEC3){
+        isTrue = 1;
+    }else if(type1 == BVEC3 && type2 == BVEC3){
+        isTrue = 1;
+    }else if(type1 == VEC3 && type2 == VEC3){
+        isTrue = 1;
+    }else if(type1 == IVEC4 && type2 == IVEC4){
+        isTrue = 1;
+    }else if(type1 == BVEC4 && type2 == BVEC4){
+        isTrue = 1;
+    }else if(type1 == VEC4 && type2 == VEC4){
+        isTrue = 1;
+    }else {
+        isTrue = 0;
+    }
+    return isTrue;
 
 }
 
 
 int CheckTypes(int type1, int type2){
-	int isTrue = -1;
-	int bt1;
-	int bt2;
-	
-	if(type1 == INT || type1 == IVEC2 || type1 == IVEC3 || type1 == IVEC4){
-		bt1 = INT;
-	}else if(type1 == BOOL || type1 == BVEC2 || type1 == BVEC3 || type1 == BVEC4){
-		bt1 = BOOL;
-	}else if(type1 == FLOAT || type1 == VEC2 || type1 == VEC3 || type1 == VEC4){
-		bt1 = FLOAT;
-	}
+    int isTrue = -1;
+    int bt1;
+    int bt2;
 
-	if(type2 == INT || type2 == IVEC2 || type2 == IVEC3 || type2 == IVEC4){
-		bt2 = INT;
-	}else if(type2 == BOOL || type2 == BVEC2 || type2 == BVEC3 || type2 == BVEC4){
-		bt2 = BOOL;
-	}else if(type2 == FLOAT || type2 == VEC2 || type2 == VEC3 || type2 == VEC4){
-		bt2 = FLOAT;
-	}
-	
-	if(bt1 == INT && bt2 == INT){
-		isTrue = INT;
-	}else if(bt1 == BOOL && bt2 == BOOL){
-		isTrue = BOOL;
-	}else if(bt1 == FLOAT && bt2 == FLOAT){
-		isTrue = FLOAT;
-	}else{
-		isTrue = -1;
-	}
-	
-	return isTrue;
+    if(type1 == INT || type1 == IVEC2 || type1 == IVEC3 || type1 == IVEC4){
+        bt1 = INT;
+    }else if(type1 == BOOL || type1 == BVEC2 || type1 == BVEC3 || type1 == BVEC4){
+        bt1 = BOOL;
+    }else if(type1 == FLOAT || type1 == VEC2 || type1 == VEC3 || type1 == VEC4){
+        bt1 = FLOAT;
+    }
 
+    if(type2 == INT || type2 == IVEC2 || type2 == IVEC3 || type2 == IVEC4){
+        bt2 = INT;
+    }else if(type2 == BOOL || type2 == BVEC2 || type2 == BVEC3 || type2 == BVEC4){
+        bt2 = BOOL;
+    }else if(type2 == FLOAT || type2 == VEC2 || type2 == VEC3 || type2 == VEC4){
+        bt2 = FLOAT;
+    }
+
+    if(bt1 == INT && bt2 == INT){
+        isTrue = INT;
+    }else if(bt1 == BOOL && bt2 == BOOL){
+        isTrue = BOOL;
+    }else if(bt1 == FLOAT && bt2 == FLOAT){
+        isTrue = FLOAT;
+    }else{
+        isTrue = -1;
+    }
+
+    return isTrue;
+
+}
+
+int countArg(node *arg)
+{
+    int count = 0;
+
+    switch(arg->kind) {
+        case NTYPE_EXPR:
+            return ++count;
+            break;
+
+        case NFUNC_EXPR:
+            return ++count;
+            break;
+
+        case NBRACKETS_EXPR:
+            return ++count;
+            break;
+
+        case NBINARY_EXPR:
+            return ++count;
+            break;
+
+        case NUNARY_EXPR:
+            return ++count;
+            break;
+
+        case NINT_EXPR:
+            return ++count;
+            break;
+
+        case NFLOAT_EXPR:
+            return ++count;
+            break;
+
+        case NBOOL_EXPR:
+            return ++count;
+            break;
+
+        case NARRAY_VARIABLE:
+            return ++count;
+            break;
+
+        case NVAR_EXPR:
+            return ++count;
+            break;
+
+        case NID_VARIABLE:
+            return ++count;
+            break;
+
+        case NARGS_ARGUMENTS:
+            ++count;
+            count += countArg(ast->args_arguments.arguments);
+            return count;
+            break;
+
+        case NEXPR_ARGUMENTS:
+            return countArg(ast->expr_arguments.expression);
+            break;
+
+        default:
+            return -1;
+            break;
+    }
+    return count;
 }

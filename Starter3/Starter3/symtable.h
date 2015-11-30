@@ -32,7 +32,8 @@ struct symtable_t {
 symtable *symtable_init(void);
 void insert_into_symtable(symtable *sym_table, char *sym_name, int type, int tClass, int scope);
 bool lookup_symtable(symtable *sym_table, char *name);
-int scope_check(symtable *sym_table, char *name, int scope);
+bool isVarDeclared(symtable *sym_table, char *name, int scope);
+bool isVarDeclaredInScope(symtable *sym_table, char *name, int scope);
 int get_data_type (symtable *sym_table, char *name);
 int get_tClass (symtable *sym_table, char *name);
 int remove_from_symtable(symtable *sym_table, char *sym_name);

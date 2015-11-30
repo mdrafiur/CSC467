@@ -51,7 +51,7 @@ bool lookup_symtable(symtable *sym_table, char *name)
     return false;
 }
 
-int scope_check(symtable *sym_table, char *name, int scope)
+bool isVarDeclared(symtable *sym_table, char *name, int scope)
 {
     symtable_node *current;
     current = sym_table->head;
@@ -59,12 +59,28 @@ int scope_check(symtable *sym_table, char *name, int scope)
 
     while(current) {
         if(strcmp(current->name, name) == 0 && current->scope == scope)
-            return current->dtype;
+            return true;
 
         current = current->next;
     }
 
-    return -1;
+    return false;
+}
+
+bool isVarDeclaredInScope(symtable *sym_table, char *name, int scope)
+{
+    symtable_node *current;
+    current = sym_table->head;
+    assert(name);
+
+    while(current) {
+        if(strcmp(current->name, name) == 0 && current->scope <= scope)
+            return true;
+
+        current = current->next;
+    }
+
+    return false;
 }
 
 int get_data_type (symtable *sym_table, char *name)

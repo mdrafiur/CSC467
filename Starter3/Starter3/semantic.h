@@ -9,5 +9,6 @@ int semantic_check( node *ast);
 int CheckTypes(int type1, int type2);
 int vectorCompare(int type1, int type2);
 int vectorChecking(int type);
+int countArg(node *arg);
 
 #endif

@@ -110,7 +110,7 @@ int semantic_check(node *ast) {
                 return -1;
 
             type_class = get_tClass(sym_table, ast->const_declaration.type->id_variable.id);
-            if(ast->const_declaration.type->kind != NINT_EXPR && ast->const_declaration.type->kind != NFLOAT_EXPR && ast->const_declaration.type->kind != NBOOL_EXPR && type_class != _CONST && type_class != UNIFORM) {
+            if(ast->const_declaration.type->kind != NINT_EXPR && ast->const_declaration.type->kind != NFLOAT_EXPR && ast->const_declaration.type->kind != NBOOL_EXPR && ast->const_declaration.type->kind != NTYPE_EXPR && ast->const_declaration.type->kind != NARRAY_VARIABLE && type_class != _CONST && type_class != UNIFORM) {
                 fprintf(errorFile, "Error: 'const' qualified variables must be initialized with a literal value or with a uniform variable\n");
                 errorOccurred = 1;
                 return -1;

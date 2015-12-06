@@ -8,44 +8,55 @@ int type, type_class;
 
 int semantic_check(node *ast) {
 
-    assert(ast);
+    if(!ast)
+        return 0;
+
     int btype;
 
     switch((int)ast->kind) {
-        case 0:
+        case UNKNOWN:
             break;
 
-        case 1:
+        case NSCOPE:
             lhs = semantic_check(ast->scope.declarations);
+            if(lhs == -1)
+                return -1;
+
             rhs = semantic_check(ast->scope.statements);
-
-            if(lhs == -1 || rhs == -1)
+            if(rhs == -1)
                 return -1;
+
+            if(lhs > rhs)
+                return lhs;
             else
-                return 0;
+                return rhs;
             break;
 
-        case 2:
+        case NDECLARATIONS:
             lhs = semantic_check(ast->declarations.declarations);
+            if(lhs == -1)
+                return -1;
+
             rhs = semantic_check(ast->declarations.declaration);
-
-            if(lhs == -1 || rhs == -1)
+            if(rhs == -1)
                 return -1;
             else
                 return rhs;
             break;
 
-        case 3:
+        case NSTATEMENTS:
             lhs = semantic_check(ast->statements.statements);
-            rhs = semantic_check(ast->statements.statement);
+            if(lhs == -1)
+                return -1;
 
-            if(lhs == -1 || rhs == -1)
+            rhs = semantic_check(ast->statements.statement);
+            if(rhs == -1)
                 return -1;
             else
                 return rhs;
             break;
 
-        case 4:
+        case NTYPE_DECLARATION:
             if(isVarDeclared(sym_table, ast->type_declaration.id, scopeNum)) {
                 fprintf(errorFile, "Error: Variable cannot be re-declared within the same scope\n");
                 errorOccurred = 1;    
@@ -55,11 +66,13 @@ int semantic_check(node *ast) {
                 return semantic_check(ast->type_declaration.type);
             break;
 
-        case 5:
+        case NASSIGN_DECLARATION:
             lhs = semantic_check(ast->assign_declaration.type);
-            rhs = semantic_check(ast->assign_declaration.expression);
+            if(lhs == -1)
+                return -1;
 
-            if(rhs == -1 || lhs == -1)
+            rhs = semantic_check(ast->assign_declaration.expression);
+            if(rhs == -1)
                 return -1;
 
             if(isVarDeclared(sym_table, ast->assign_declaration.id, scopeNum)) {
@@ -87,11 +100,13 @@ int semantic_check(node *ast) {
             }
             break;
 
-        case 6: 
+        case NCONST_DECLARATION: 
             lhs = semantic_check(ast->const_declaration.type);
-            rhs = semantic_check(ast->const_declaration.expression);
+            if(lhs == -1)
+                return -1;
 
-            if(rhs == -1 || lhs == -1)
+            rhs = semantic_check(ast->const_declaration.expression);
+            if(rhs == -1)
                 return -1;
 
             type_class = get_tClass(sym_table, ast->const_declaration.type->id_variable.id);
@@ -120,19 +135,20 @@ int semantic_check(node *ast) {
             }
             break;
 
-            //NASSIGN_STATEMENT
-        case 7:
+        case NASSIGN_STATEMENT:
             lhs = semantic_check(ast->assign_statement.variable);
-            rhs = semantic_check(ast->assign_statement.expression);
-
-            if(lhs ==  -1 || rhs == -1){
+            if(lhs == -1)
                 return -1;
-            }else
+
+            rhs = semantic_check(ast->assign_statement.expression);
+            if(rhs == -1)
+                return -1;
+            else
                 return CheckTypes(rhs, lhs);
 
             break;
 
-        case 8:
+        case NIF_STATEMENT:
             lhs = semantic_check(ast->if_statement.condition);
 
             if(lhs == -1)
@@ -148,9 +164,8 @@ int semantic_check(node *ast) {
             }                                     
             break;
 
-        case 9:
+        case NIF_ELSE_STATEMENT:
             lhs = semantic_check(ast->if_else_statement.condition);
-
             if(lhs == -1)
                 return -1;
 
@@ -165,17 +180,16 @@ int semantic_check(node *ast) {
             }
             break;
 
-        case 10:
+        case NSCOPE_STATEMENT:
             scopeNum++;
             check_prog_scope = semantic_check(ast->prog_scope.scope);
             scopeNum--;
             return check_prog_scope;
             break;
 
-            //unary expression
-        case 11:
+        //unary expression
+        case NUNARY_EXPR:
             rhs = semantic_check(ast->unary_expr.right);
-
             if(rhs == -1)
                 return -1;
 
@@ -201,13 +215,12 @@ int semantic_check(node *ast) {
             }
             break;
 
-            //NBINARY_EXPR
-        case 12:
+        case NBINARY_EXPR:
             rhs = semantic_check(ast->binary_expr.right);
             lhs = semantic_check(ast->binary_expr.left);
             btype = CheckTypes(rhs, lhs);
 
-            if(rhs == -1 ||lhs == -1){
+            if(rhs == -1 || lhs == -1){
                 return -1;
             }else if(btype == -1){
                 fprintf(errorFile, "Error: The operands to binary operators must have same base types\n");
@@ -219,6 +232,7 @@ int semantic_check(node *ast) {
                     errorOccurred = 1;
                     return -1;
                 }else{
+                    btype = BOOL;
                     ast->binary_expr.type = btype;
                     return btype;
                 }
@@ -227,11 +241,12 @@ int semantic_check(node *ast) {
                     fprintf(errorFile, "Error: All operands to logical operators must have boolean types\n");
                     errorOccurred = 1;
                     return -1;
-                }else if(vectorChecking(rhs) == 1 || vectorChecking(lhs) == 1){
+                }else if((vectorChecking(rhs) && !vectorChecking(lhs)) || (!vectorChecking(rhs) && vectorChecking(lhs))){
                     fprintf(errorFile, "Error: The operands to logical operators must be both vectors or both scalars\n");
                     errorOccurred = 1;
                     return -1;
                 }else{
+                    btype = BOOL;
                     ast->binary_expr.type = btype;
                     return btype;
                 }
@@ -245,6 +260,7 @@ int semantic_check(node *ast) {
                     errorOccurred = 1;
                     return -1;
                 }else{
+                    btype = BOOL;
                     ast->binary_expr.type = btype;
                     return btype;
                 }
@@ -252,14 +268,13 @@ int semantic_check(node *ast) {
             else
                 return -1;
 
-
             break;
 
-        case 13:
+        case NBRACKETS_EXPR:
             return semantic_check(ast->brackets_expr.expression);
             break;
 
-        case 14:
+        case NFUNC_EXPR:
             rhs = semantic_check(ast->func_expr.arguments_opt);
 
             if(rhs == -1)
@@ -273,7 +288,7 @@ int semantic_check(node *ast) {
                     else if(rhs == VEC3 || rhs == VEC4)
                         return FLOAT;
                     else {
-                        fprintf(errorFile, "Error: Function argument doesn't match as expected\n");
+                        fprintf(errorFile, "Error: Function argument doesn't match as expected ('db3' supports arguments of type 'vec3', 'vec4', 'ivec3' & 'ivec4')\n");
                         errorOccurred = 1;
                         return -1;
                     }
@@ -283,7 +298,7 @@ int semantic_check(node *ast) {
                     if(rhs == VEC4)
                         return VEC4;
                     else {
-                        fprintf(errorFile, "Error: Function argument doesn't match as expected\n");
+                        fprintf(errorFile, "Error: Function argument doesn't match as expected ('lit' only supports argument of type 'vec4')\n");
                         errorOccurred = 1;
                         return -1;
                     }
@@ -293,21 +308,21 @@ int semantic_check(node *ast) {
                     if(rhs == FLOAT || rhs == INT)
                         return FLOAT;
                     else {
-                        fprintf(errorFile, "Error: Function argument doesn't match as expected\n");
+                        fprintf(errorFile, "Error: Function argument doesn't match as expected ('rsq' supports arguments of type 'int' & 'float')\n");
                         errorOccurred = 1;
                         return -1;
                     }
                     break;
 
                 default:
-                    fprintf(errorFile, "Error: Function name doesn't match as expected\n");
+                    fprintf(errorFile, "Error: Function name doesn't match as expected (supported function names - 'db3', 'lit' & 'rsq')\n");
                     errorOccurred = 1;
                     return -1;
                     break;
             }
             break;
 
-        case 15:
+        case NTYPE_EXPR:
             lhs = semantic_check(ast->type_expr.type);
             rhs = semantic_check(ast->type_expr.arguments_opt);
 
@@ -343,38 +358,45 @@ int semantic_check(node *ast) {
             }
             break;
 
-        case 16:
+        case NVAR_EXPR:
             return semantic_check(ast->var_expr.variable);            
             break;
 
-        case 17:
+        case NINT_EXPR:
             return INT;
             break;
 
-        case 18:
+        case NFLOAT_EXPR:
             return FLOAT;
             break;
 
-        case 19:
+        case NBOOL_EXPR:
             return BOOL;
             break;
 
-        case 20:
-            if(isVarDeclaredInScope(sym_table, ast->id_variable.id, scopeNum)) {
+        case NID_VARIABLE:
+            if(!isVarDeclaredInScope(sym_table, ast->id_variable.id, scopeNum)) {
                 fprintf(errorFile, "Error: Variable cannot be used before it is declared\n");
                 errorOccurred = 1;
                 return -1;
             }
-            else 
+            else {
+                type_class = get_tClass(sym_table, ast->id_variable.id); 
+                if(type_class == _CONST) {
+                    fprintf(errorFile, "Error: Variable cannot be used before it is declared\n");
+                    errorOccurred = 1;
+                    return -1;
+                }
                 return get_data_type(sym_table, ast->id_variable.id);
+            }
             break;
 
-        case 21:
+        case NARRAY_VARIABLE:
             x = ast->array_variable.index;
             type = get_data_type(sym_table, ast->array_variable.id);
 
             if(type != IVEC2 || type != IVEC3 || type != IVEC4 || type != BVEC2 || type != BVEC3 || type != BVEC4 || type != VEC2 || type != VEC3 || type != VEC4) {
-                fprintf(errorFile, "Error: Only 'vec' type supported\n");
+            fprintf(errorFile, "Error: Only 'vec' type supported\n");
                 errorOccurred = 1;
                 return -1;
             }
@@ -385,9 +407,19 @@ int semantic_check(node *ast) {
                 errorOccurred = 1;
                 return -1;
             }
+
+            if(type == IVEC2 || type == IVEC3 || type == IVEC4)
+                return INT;
+            
+            if(type == BVEC2 || type == BVEC3 || type == BVEC4)
+                return BOOL;
+
+            if(type == VEC2 || type == VEC3 || type == VEC4)
+                return FLOAT;
+
             break;
 
-        case 22:
+        case NARGS_ARGUMENTS:
             lhs = semantic_check(ast->args_arguments.arguments);
             rhs = semantic_check(ast->args_arguments.expression);
 
@@ -404,19 +436,19 @@ int semantic_check(node *ast) {
             }
             break;
 
-        case 23:
+        case NEXPR_ARGUMENTS:
             return semantic_check(ast->expr_arguments.expression);
             break;
 
-        case 24:
+        case NARGUMENTS_OPT:
             return semantic_check(ast->arguments_opt.arguments);
             break;
 
-        case 25:
+        case NTYPE:
             return ast->type.type_kind;
             break;
 
-        case 26:
+        case NPROG_SCOPE:
             scopeNum++;
             check_prog_scope = semantic_check(ast->prog_scope.scope);
             scopeNum--;

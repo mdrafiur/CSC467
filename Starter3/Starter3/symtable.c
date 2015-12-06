@@ -16,9 +16,6 @@ void insert_into_symtable(symtable *sym_table, char *sym_name, int type, int tCl
 {            
     symtable_node *new_node;
 
-    //if(lookup_symtable(sym_table, sym_name))
-    //return;
-
     new_node = (symtable_node *)malloc(sizeof(symtable_node));
     assert(new_node);
 

@@ -12,19 +12,19 @@ int scope_num = 0;
 void preDefVarIntoSymTable(void) {
 
     // insert pre-defined variables into symtable
-    insert_into_symtable(sym_table, "gl_FragColor", VEC4, RESULT, scope_num);
-    insert_into_symtable(sym_table, "gl_FragDepth", BOOL, RESULT, scope_num);
-    insert_into_symtable(sym_table, "gl_FragCoord", VEC4, RESULT, scope_num);
-    insert_into_symtable(sym_table, "gl_TexCoord", VEC4, ATTRIBUTE, scope_num);
-    insert_into_symtable(sym_table, "gl_Color", VEC4, ATTRIBUTE, scope_num);
-    insert_into_symtable(sym_table, "gl_Secondary", VEC4, ATTRIBUTE, scope_num);
-    insert_into_symtable(sym_table, "gl_FogFragCoord", VEC4, ATTRIBUTE, scope_num);
-    insert_into_symtable(sym_table, "gl_Light_Half", VEC4, UNIFORM, scope_num);
-    insert_into_symtable(sym_table, "gl_Light_Ambient", VEC4, UNIFORM, scope_num);
-    insert_into_symtable(sym_table, "gl_Material_Shininess", VEC4, UNIFORM, scope_num);
-    insert_into_symtable(sym_table, "env1", VEC4, UNIFORM, scope_num);
-    insert_into_symtable(sym_table, "env2", VEC4, UNIFORM, scope_num);
-    insert_into_symtable(sym_table, "env3", VEC4, UNIFORM, scope_num);
+    insert_into_symtable(sym_table, "gl_FragColor", 11, RESULT, scope_num);
+    insert_into_symtable(sym_table, "gl_FragDepth", 4, RESULT, scope_num);
+    insert_into_symtable(sym_table, "gl_FragCoord", 11, RESULT, scope_num);
+    insert_into_symtable(sym_table, "gl_TexCoord", 11, ATTRIBUTE, scope_num);
+    insert_into_symtable(sym_table, "gl_Color", 11, ATTRIBUTE, scope_num);
+    insert_into_symtable(sym_table, "gl_Secondary", 11, ATTRIBUTE, scope_num);
+    insert_into_symtable(sym_table, "gl_FogFragCoord", 11, ATTRIBUTE, scope_num);
+    insert_into_symtable(sym_table, "gl_Light_Half", 11, UNIFORM, scope_num);
+    insert_into_symtable(sym_table, "gl_Light_Ambient", 11, UNIFORM, scope_num);
+    insert_into_symtable(sym_table, "gl_Material_Shininess", 11, UNIFORM, scope_num);
+    insert_into_symtable(sym_table, "env1", 11, UNIFORM, scope_num);
+    insert_into_symtable(sym_table, "env2", 11, UNIFORM, scope_num);
+    insert_into_symtable(sym_table, "env3", 11, UNIFORM, scope_num);
 }
     
 void symbol_table(node *ast) {

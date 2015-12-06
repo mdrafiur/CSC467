@@ -395,12 +395,14 @@ int semantic_check(node *ast) {
             x = ast->array_variable.index;
             type = get_data_type(sym_table, ast->array_variable.id);
 
-            if(type != IVEC2 || type != IVEC3 || type != IVEC4 || type != BVEC2 || type != BVEC3 || type != BVEC4 || type != VEC2 || type != VEC3 || type != VEC4) {
-            fprintf(errorFile, "Error: Only 'vec' type supported\n");
+            if(type == IVEC2 || type == IVEC3 || type == IVEC4 || type == BVEC2 || type == BVEC3 || type == BVEC4 || type == VEC2 || type == VEC3 || type == VEC4)
+                ;
+            else {
+                fprintf(errorFile, "Error: Only 'vec' type supported\n");
                 errorOccurred = 1;
                 return -1;
             }
-            else if((type == IVEC2 && x < 2) || (type == IVEC3 && x < 3) || (type == IVEC4 && x < 4) || (type == BVEC2 && x < 2) || (type == BVEC3 && x < 3) || (type == BVEC4 && x < 4) || (type == VEC2 && x < 2) || (type == VEC3 && x < 3) || (type == VEC4 && x < 4))
+            if((type == IVEC2 && x < 2) || (type == IVEC3 && x < 3) || (type == IVEC4 && x < 4) || (type == BVEC2 && x < 2) || (type == BVEC3 && x < 3) || (type == BVEC4 && x < 4) || (type == VEC2 && x < 2) || (type == VEC3 && x < 3) || (type == VEC4 && x < 4))
                 ;
             else {
                 fprintf(errorFile, "Error: Index limit exceeded\n");

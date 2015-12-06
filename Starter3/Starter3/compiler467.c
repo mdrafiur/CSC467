@@ -90,8 +90,10 @@ int main (int argc, char *argv[]) {
   }
 
 /* Phase 3: Call the AST dumping routine if requested */
+  //preDefVarIntoSymTable();
   symbol_table(ast);
-
+  preDefVarIntoSymTable();
+display();
   if(semantic_check(ast) == -1)
     fprintf(stderr, "Error: semantic check failed !\n");
     

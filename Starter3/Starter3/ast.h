@@ -57,22 +57,20 @@ typedef enum {
 	NPROG_SCOPE,
 } node_kind;
 
-
-
 typedef enum{
-	INT,
-    FUNCTION,
+    INT,
     IVEC2,
-	IVEC3,
-	IVEC4,
-	BOOL,
-	BVEC2,
-	BVEC3,
-	BVEC4,
-	FLOAT,
-	VEC2,
-	VEC3,
-	VEC4,
+    IVEC3,
+    IVEC4,
+    BOOL,
+    BVEC2,
+    BVEC3,
+    BVEC4,
+    FLOAT,
+    VEC2,
+    VEC3,
+    VEC4,
+    FUNCTION,
 }node_type;
 
 typedef enum{

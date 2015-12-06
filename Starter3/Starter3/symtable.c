@@ -8,20 +8,20 @@ symtable *symtable_init(void)
 
     s->num_item = 0;
     s->head = NULL;
-              
+
     return s;
 }
 
 void insert_into_symtable(symtable *sym_table, char *sym_name, int type, int tClass, int scope) 
 {            
     symtable_node *new_node;
-                
-    if(lookup_symtable(sym_table, sym_name))
-        return;
+
+    //if(lookup_symtable(sym_table, sym_name))
+    //return;
 
     new_node = (symtable_node *)malloc(sizeof(symtable_node));
     assert(new_node);
-                                                        
+
     new_node->name = (char *)malloc(strlen(sym_name) + 1);
     assert(new_node->name);
     strcpy(new_node->name, sym_name);
@@ -55,10 +55,13 @@ bool isVarDeclared(symtable *sym_table, char *name, int scope)
 {
     symtable_node *current;
     current = sym_table->head;
+    int numFound = 0;
     assert(name);
 
     while(current) {
         if(strcmp(current->name, name) == 0 && current->scope == scope)
+            numFound++;
+        if(numFound == 2)
             return true;
 
         current = current->next;
@@ -87,13 +90,13 @@ int get_data_type (symtable *sym_table, char *name)
 {
     symtable_node *current;
     current = sym_table->head;
-    
+
     assert(name);
-               
+
     while(current) {
         if(strcmp(current->name, name) == 0)
             return current->dtype;
-         
+
         current = current->next;
     }
 
@@ -104,13 +107,13 @@ int get_tClass (symtable *sym_table, char *name)
 {
     symtable_node *current;
     current = sym_table->head;
-    
+
     assert(name);
-               
+
     while(current) {
         if(strcmp(current->name, name) == 0)
             return current->tClass;
-         
+
         current = current->next;
     }
 
@@ -131,7 +134,7 @@ int remove_from_symtable(symtable *sym_table, char *sym_name)
                 sym_table->head = sym_table->head->next;
             else
                 prev->next = current->next;
-                                                                      
+
             free(current->name);
             free(current);
             sym_table->num_item--;
@@ -141,3 +144,21 @@ int remove_from_symtable(symtable *sym_table, char *sym_name)
     return -1;
 }
 
+void display()
+{
+    symtable_node *listTrav=sym_table->head;
+    if(listTrav==NULL)
+    {
+        printf("\nList is Empty\n");
+    }
+    else
+    {
+        printf("\nElements in the List: ");
+        while(listTrav!=NULL)
+        {
+            printf(" -> %s, %d, %d, %d",listTrav->name, listTrav->dtype, listTrav->tClass, listTrav->scope);
+            listTrav=listTrav->next;
+        }
+        printf("\n");
+    }
+}

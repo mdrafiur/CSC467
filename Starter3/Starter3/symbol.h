@@ -4,6 +4,7 @@
 #include "common.h"
 #include "ast.h"
 
+void preDefVarIntoSymTable(void);
 void symbol_table(node *ast);
 
 #endif

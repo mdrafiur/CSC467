@@ -9,9 +9,7 @@
 symtable *sym_table = symtable_init();
 int scope_num = 0;
 
-void symbol_table(node *ast) {
-
-    assert(ast);
+void preDefVarIntoSymTable(void) {
 
     // insert pre-defined variables into symtable
     insert_into_symtable(sym_table, "gl_FragColor", VEC4, RESULT, scope_num);
@@ -27,6 +25,11 @@ void symbol_table(node *ast) {
     insert_into_symtable(sym_table, "env1", VEC4, UNIFORM, scope_num);
     insert_into_symtable(sym_table, "env2", VEC4, UNIFORM, scope_num);
     insert_into_symtable(sym_table, "env3", VEC4, UNIFORM, scope_num);
+}
+    
+void symbol_table(node *ast) {
+    if(!ast)
+        return;
 
     switch((int)ast->kind){
         case 0:

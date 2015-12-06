@@ -37,3 +37,4 @@ bool isVarDeclaredInScope(symtable *sym_table, char *name, int scope);
 int get_data_type (symtable *sym_table, char *name);
 int get_tClass (symtable *sym_table, char *name);
 int remove_from_symtable(symtable *sym_table, char *sym_name);
+void display(void);

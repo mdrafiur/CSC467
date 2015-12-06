@@ -204,18 +204,19 @@ int printToFile(node *ast){
 				return -1;
 			}
 			if(ast->binary_expr.op == AND_OPS){
-				fprintf("MUL temReg%d, temReg%d, temReg%d;\n", tempregCount - 1, tempregCount, tempregCount - 1);
+				fprintf("MIN temReg%d, temReg%d, temReg%d;\n", tempregCount - 1, tempregCount, tempregCount - 1);
 				tempregCount --;
 			}else if(ast->binary_expr.op == OR_OPS){
-				fprintf("ADD temReg%d, temReg%d, temReg%d;\n", tempregCount - 1, tempregCount, tempregCount - 1);
+				fprintf("MAX temReg%d, temReg%d, temReg%d;\n", tempregCount - 1, tempregCount, tempregCount - 1);
 				tempregCount --;
 			}else if(ast->binary_expr.op == EQ_OPS){
 				fprintf("SUB temReg%d, temReg%d, temReg%d;\n", tempregCount - 1, tempregCount, tempregCount - 1);
-				
 				fprintf("SGE temReg%d, temReg%d, 0;\n", tempregCount, tempregCount - 1);
 				fprintf("SLT temReg%d, temReg%d, 0;\n", tempregCount - 1, tempregCount - 1);
-				fprintf("MUL temReg%d, temReg%d, temReg%d;\n", tempregCount - 1, tempregCount, tempregCount - 1);
 				tempregCount --;
+				fprintf("SUB temReg%d, temReg%d, 1;\n", tempregCount, tempregCount);
+				fprintf("CMP temReg%d, temReg%d, -1, 1;\n", tempregCount, tempregCount);
+				
 			}else if(ast->binary_expr.op == NEQ_OPS){
 				
 			}

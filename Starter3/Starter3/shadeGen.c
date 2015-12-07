@@ -254,36 +254,39 @@ int printToFile(node *ast){
 				fprintf(fragFile,"CMP temReg%d, temReg%d, -1, 1;\n", tempregCount, tempregCount);
 			}else if(ast->binary_expr.op == NEQ_OPS){
 				fprintf(fragFile,"SUB temReg%d, temReg%d, temReg%d;\n", tempregCount - 1, tempregCount, tempregCount - 1);
-                fprintf(fragFile,"SGE temReg%d, temReg%d, 0;\n", tempregCount, tempregCount - 1);
-                fprintf(fragFile,"SLT temReg%d, temReg%d, 0;\n", tempregCount - 1, tempregCount - 1);
-                tempregCount--;
-                fprintf(fragFile,"SUB temReg%d, temReg%d, 1;\n", tempregCount, tempregCount);
-                fprintf(fragFile,"CMP temReg%d, temReg%d, 1, -1;\n", tempregCount, tempregCount);
+		                fprintf(fragFile,"SGE temReg%d, temReg%d, 0;\n", tempregCount, tempregCount - 1);
+		                fprintf(fragFile,"SLT temReg%d, temReg%d, 0;\n", tempregCount - 1, tempregCount - 1);
+		                tempregCount--;
+		                fprintf(fragFile,"SUB temReg%d, temReg%d, 1;\n", tempregCount, tempregCount);
+		                fprintf(fragFile,"CMP temReg%d, temReg%d, 1, -1;\n", tempregCount, tempregCount);
 			}else if(ast->binary_expr.op == GEQ_OPS){
-                fprintf(fragFile,"SGE temReg%d, temReg%d, temReg%d;\n", tempregCount - 1, tempregCount, tempregCount - 1);
-                tempregCount--;
-                fprintf(fragFile,"SUB temReg%d, temReg%d, 1;\n", tempregCount, tempregCount);
-                fprintf(fragFile,"CMP temReg%d, temReg%d, -1, 1;\n", tempregCount, tempregCount);
-            }else if(ast->binary_expr.op == LEQ_OPS){
-                fprintf(fragFile,"SGE temReg%d, temReg%d, temReg%d;\n", tempregCount - 1, tempregCount, tempregCount - 1);
-                tempregCount--;
-                fprintf(fragFile,"SUB temReg%d, temReg%d, 1;\n", tempregCount, tempregCount);
-                fprintf(fragFile,"CMP temReg%d, temReg%d, -1, 1;\n", tempregCount, tempregCount);
-            }else if(ast->binary_expr.op == PLUS_OPS){
-                fprintf(fragFile,"ADD temReg%d, temReg%d, temReg%d;\n", tempregCount - 1, tempregCount, tempregCount - 1);
+		                fprintf(fragFile,"SGE temReg%d, temReg%d, temReg%d;\n", tempregCount - 1, tempregCount, tempregCount - 1);
+		                tempregCount--;
+		                fprintf(fragFile,"SUB temReg%d, temReg%d, 1;\n", tempregCount, tempregCount);
+		                fprintf(fragFile,"CMP temReg%d, temReg%d, -1, 1;\n", tempregCount, tempregCount);
+		        }else if(ast->binary_expr.op == LEQ_OPS){
+		                fprintf(fragFile,"SGE temReg%d, temReg%d, temReg%d;\n", tempregCount - 1, tempregCount, tempregCount - 1);
+		                tempregCount--;
+		                fprintf(fragFile,"SUB temReg%d, temReg%d, 1;\n", tempregCount, tempregCount);
+		                fprintf(fragFile,"CMP temReg%d, temReg%d, -1, 1;\n", tempregCount, tempregCount);
+		        }else if(ast->binary_expr.op == PLUS_OPS){
+		                fprintf(fragFile,"ADD temReg%d, temReg%d, temReg%d;\n", tempregCount - 1, tempregCount, tempregCount - 1);
 				tempregCount--;
-            }else if(ast->binary_expr.op == MINUS_OPS){
-                fprintf(fragFile,"SUB temReg%d, temReg%d, temReg%d;\n", tempregCount - 1, tempregCount, tempregCount - 1);
+		        }else if(ast->binary_expr.op == MINUS_OPS){
+		                fprintf(fragFile,"SUB temReg%d, temReg%d, temReg%d;\n", tempregCount - 1, tempregCount, tempregCount - 1);
 				tempregCount--;
-            }else if(ast->binary_expr.op == TIMES_OPS){
-                fprintf(fragFile,"MUL temReg%d, temReg%d, temReg%d;\n", tempregCount - 1, tempregCount, tempregCount - 1);
+		        }else if(ast->binary_expr.op == TIMES_OPS){
+		                fprintf(fragFile,"MUL temReg%d, temReg%d, temReg%d;\n", tempregCount - 1, tempregCount, tempregCount - 1);
 				tempregCount--;
-            }else if(ast->binary_expr.op == LESS_OPS){
-                fprintf(fragFile,"SUB temReg%d, temReg%d, temReg%d;\n", tempregCount - 1, tempregCount, tempregCount - 1);
-                tempregCount--;
-                fprintf(fragFile,"CMP temReg%d, temReg%d, 1, -1;\n", tempregCount - 1, tempregCount -1);
-            }
-            break;
+		        }else if(ast->binary_expr.op == LESS_OPS){
+		                fprintf(fragFile,"SUB temReg%d, temReg%d, temReg%d;\n", tempregCount - 1, tempregCount, tempregCount - 1);
+		                tempregCount--;
+		                fprintf(fragFile,"CMP temReg%d, temReg%d, 1, -1;\n", tempregCount - 1, tempregCount -1);
+		        }else if(ast->binary_expr.op == POW_OPS){
+		            	fprintf(fragFile,"POW temReg%d, temReg%d, temReg%d;\n", tempregCount - 1, tempregCount, tempregCount - 1);
+				tempregCount--;
+		        }
+            		break;
 
 		case NBRACKETS_EXPR:
 			rightExpr = printToFile(ast->brackets_expr.expression);

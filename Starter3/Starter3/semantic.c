@@ -5,6 +5,7 @@ int check_prog_scope;
 int numArgs, x;
 int lhs, rhs;
 int type, type_class;
+char *id;
 
 int semantic_check(node *ast) {
 
@@ -217,10 +218,13 @@ int semantic_check(node *ast) {
 
         case NBINARY_EXPR:
             rhs = semantic_check(ast->binary_expr.right);
+            if(rhs == -1)
+                return -1;
+                
             lhs = semantic_check(ast->binary_expr.left);
             btype = CheckTypes(rhs, lhs);
-
-            if(rhs == -1 || lhs == -1){
+            
+            if(lhs == -1){
                 return -1;
             }else if(btype == -1){
                 fprintf(errorFile, "Error: The operands to binary operators must have same base types\n");
@@ -324,9 +328,11 @@ int semantic_check(node *ast) {
 
         case NTYPE_EXPR:
             lhs = semantic_check(ast->type_expr.type);
+            if(lhs == -1)
+                return -1;
+                
             rhs = semantic_check(ast->type_expr.arguments_opt);
-
-            if(lhs == -1 || rhs == -1)
+            if(rhs == -1)
                 return -1;
 
             numArgs = countArg(ast->type_expr.arguments_opt);
@@ -375,19 +381,25 @@ int semantic_check(node *ast) {
             break;
 
         case NID_VARIABLE:
-            if(!isVarDeclaredInScope(sym_table, ast->id_variable.id, scopeNum)) {
+            id = ast->id_variable.id;
+            if(!isVarDeclaredInScope(sym_table, id, scopeNum)) {
                 fprintf(errorFile, "Error: Variable cannot be used before it is declared\n");
                 errorOccurred = 1;
                 return -1;
             }
+            else if(strcmp(id, "TEMP") == 0 || strcmp(id, "ADDRESS") == 0) {
+                fprintf(errorFile, "Error: Reserved words can not be used as variable\n");
+                errorOccurred = 1;
+                return -1;
+            }
             else {
-                type_class = get_tClass(sym_table, ast->id_variable.id); 
+                type_class = get_tClass(sym_table, id); 
                 if(type_class == _CONST) {
                     fprintf(errorFile, "Error: Variable cannot be used before it is declared\n");
                     errorOccurred = 1;
                     return -1;
                 }
-                return get_data_type(sym_table, ast->id_variable.id);
+                return get_data_type(sym_table, id);
             }
             break;
 
@@ -423,9 +435,11 @@ int semantic_check(node *ast) {
 
         case NARGS_ARGUMENTS:
             lhs = semantic_check(ast->args_arguments.arguments);
+            if(lhs == -1)
+                return -1;
+                
             rhs = semantic_check(ast->args_arguments.expression);
-
-            if(lhs == -1 || rhs == -1)
+            if(rhs == -1)
                 return -1;
 
             else if(lhs == rhs)

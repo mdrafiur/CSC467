@@ -24,9 +24,10 @@
 /* Phases 3,4: Uncomment following includes as needed */
 //#include "codegen.h"
 #include "common.h"
-#include "ast.h"
+//#include "ast.h"
 #include "symbol.h"
 #include "semantic.h"
+#include "shadeGen.h"
 
 /***********************************************************************
  * Default values for various files. Note assumption that default files
@@ -105,7 +106,7 @@ display();
   if (errorOccurred)
     fprintf(outputFile,"Failed to compile\n");
   else 
-   // genCode(ast);
+     boots(ast);
     ;
 /***********************************************************************
  * Post Compilation Cleanup

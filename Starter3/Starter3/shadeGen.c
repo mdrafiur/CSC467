@@ -278,6 +278,10 @@ int printToFile(node *ast){
 		        }else if(ast->binary_expr.op == TIMES_OPS){
 		                fprintf(fragFile,"MUL temReg%d, temReg%d, temReg%d;\n", tempregCount - 1, tempregCount, tempregCount - 1);
 				tempregCount--;
+		        }else if(ast->binary_expr.op == GTR_OPS){
+		                fprintf(fragFile,"SUB temReg%d, temReg%d, temReg%d;\n", tempregCount - 1, tempregCount, tempregCount - 1);
+		                tempregCount--;
+		                fprintf(fragFile,"CMP temReg%d, temReg%d, -1, 1;\n", tempregCount - 1, tempregCount -1);
 		        }else if(ast->binary_expr.op == LESS_OPS){
 		                fprintf(fragFile,"SUB temReg%d, temReg%d, temReg%d;\n", tempregCount - 1, tempregCount, tempregCount - 1);
 		                tempregCount--;
